@@ -1,0 +1,705 @@
+openapi: 3.1.0
+
+info:
+  title: Orion API
+  version: 0.1.0
+  description: API REST du MVP Orion.
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Environnement local
+
+tags:
+  - name: Authentication
+  - name: Users
+  - name: Topics
+  - name: Feed
+  - name: Articles
+  - name: Comments
+
+security:
+  - cookieAuth: []
+
+paths:
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Créer un compte
+      operationId: register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequestDto'
+      responses:
+        '201':
+          description: Compte créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDto'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '409':
+          $ref: '#/components/responses/ConflictProblem'
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Se connecter
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDto'
+      responses:
+        '200':
+          description: Connexion réussie et session créée
+          headers:
+            Set-Cookie:
+              description: Cookie de session HTTP-only sécurisé
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDto'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+
+  /auth/logout:
+    post:
+      tags: [Authentication]
+      summary: Se déconnecter
+      operationId: logout
+      responses:
+        '204':
+          description: Session supprimée
+          headers:
+            Set-Cookie:
+              description: Cookie de session supprimé
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Consulter son profil
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: Profil de l'utilisateur connecté
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponseDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+    patch:
+      tags: [Users]
+      summary: Modifier son profil
+      operationId: updateCurrentUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequestDto'
+      responses:
+        '200':
+          description: Profil mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDto'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '409':
+          $ref: '#/components/responses/ConflictProblem'
+    delete:
+      tags: [Users]
+      summary: Désactiver son compte
+      description: La suppression est refusée si le compte possède encore des articles ou commentaires.
+      operationId: deactivateCurrentUser
+      responses:
+        '204':
+          description: Compte désactivé
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '409':
+          $ref: '#/components/responses/ConflictProblem'
+
+  /topics:
+    get:
+      tags: [Topics]
+      summary: Lister les thèmes
+      operationId: getTopics
+      responses:
+        '200':
+          description: Liste des thèmes et état d'abonnement de l'utilisateur
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicResponseDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+
+  /topics/{topicId}:
+    delete:
+      tags: [Topics]
+      summary: Supprimer un thème
+      description: Réservé à un administrateur. Refusé si le thème possède des articles.
+      operationId: deleteTopic
+      parameters:
+        - $ref: '#/components/parameters/TopicId'
+      responses:
+        '204':
+          description: Thème supprimé
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '403':
+          $ref: '#/components/responses/ForbiddenProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+        '409':
+          $ref: '#/components/responses/ConflictProblem'
+
+  /topics/{topicId}/subscription:
+    put:
+      tags: [Topics]
+      summary: S'abonner à un thème
+      description: Opération idempotente ; un deuxième appel ne crée pas de doublon.
+      operationId: subscribeToTopic
+      parameters:
+        - $ref: '#/components/parameters/TopicId'
+      responses:
+        '204':
+          description: Abonnement créé ou déjà existant
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+    delete:
+      tags: [Topics]
+      summary: Se désabonner d'un thème
+      operationId: unsubscribeFromTopic
+      parameters:
+        - $ref: '#/components/parameters/TopicId'
+      responses:
+        '204':
+          description: Abonnement supprimé
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+
+  /feed:
+    get:
+      tags: [Feed]
+      summary: Consulter son fil d'actualité
+      operationId: getFeed
+      parameters:
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Articles des thèmes auxquels l'utilisateur est abonné
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticlePageResponseDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+
+  /articles:
+    post:
+      tags: [Articles]
+      summary: Publier un article
+      operationId: createArticle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateArticleRequestDto'
+      responses:
+        '201':
+          description: Article créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleDetailResponseDto'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+
+  /articles/{articleId}:
+    get:
+      tags: [Articles]
+      summary: Consulter un article
+      operationId: getArticleById
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      responses:
+        '200':
+          description: Détail de l'article
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleDetailResponseDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+    delete:
+      tags: [Articles]
+      summary: Supprimer un article
+      description: Autorisé uniquement pour l'auteur de l'article ou un administrateur.
+      operationId: deleteArticle
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      responses:
+        '204':
+          description: Article et commentaires associés supprimés
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '403':
+          $ref: '#/components/responses/ForbiddenProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+
+  /articles/{articleId}/comments:
+    get:
+      tags: [Comments]
+      summary: Lister les commentaires d'un article
+      operationId: getArticleComments
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Commentaires de l'article
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentPageResponseDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+    post:
+      tags: [Comments]
+      summary: Ajouter un commentaire
+      operationId: createComment
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommentRequestDto'
+      responses:
+        '201':
+          description: Commentaire créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponseDto'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+
+  /comments/{commentId}:
+    delete:
+      tags: [Comments]
+      summary: Supprimer un commentaire
+      description: Autorisé uniquement pour l'auteur du commentaire ou un administrateur.
+      operationId: deleteComment
+      parameters:
+        - $ref: '#/components/parameters/CommentId'
+      responses:
+        '204':
+          description: Commentaire supprimé
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '403':
+          $ref: '#/components/responses/ForbiddenProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: ORION_SESSION
+      description: Cookie de session HTTP-only fourni après la connexion.
+
+  parameters:
+    TopicId:
+      name: topicId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ArticleId:
+      name: articleId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CommentId:
+      name: commentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Sort:
+      name: sort
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [newest, oldest]
+        default: newest
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    Size:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  responses:
+    ValidationProblem:
+      description: Données envoyées invalides
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationProblemDetail'
+    UnauthorizedProblem:
+      description: Authentification requise ou identifiants invalides
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    ForbiddenProblem:
+      description: Action non autorisée
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    NotFoundProblem:
+      description: Ressource introuvable
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    ConflictProblem:
+      description: Conflit avec l'état actuel de la ressource
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+
+  schemas:
+    RegisterRequestDto:
+      type: object
+      additionalProperties: false
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 50
+          examples: [orlando]
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          examples: [orlando@example.com]
+        password:
+          type: string
+          format: password
+          minLength: 8
+          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).+$'
+          examples: [Orion2026!]
+
+    LoginRequestDto:
+      type: object
+      additionalProperties: false
+      required: [identifier, password]
+      properties:
+        identifier:
+          type: string
+          description: E-mail ou nom d'utilisateur
+          minLength: 1
+          maxLength: 255
+        password:
+          type: string
+          format: password
+          minLength: 1
+
+    UpdateUserRequestDto:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      dependentRequired:
+        password: [currentPassword]
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        currentPassword:
+          type: string
+          format: password
+          description: Obligatoire lors du changement de mot de passe.
+        password:
+          type: string
+          format: password
+          minLength: 8
+          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).+$'
+
+    UserResponseDto:
+      type: object
+      required: [id, username, email, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UserProfileResponseDto:
+      allOf:
+        - $ref: '#/components/schemas/UserResponseDto'
+        - type: object
+          required: [subscriptions]
+          properties:
+            subscriptions:
+              type: array
+              items:
+                $ref: '#/components/schemas/TopicResponseDto'
+
+    TopicResponseDto:
+      type: object
+      additionalProperties: false
+      required: [id, name, subscribed]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        subscribed:
+          type: boolean
+
+    CreateArticleRequestDto:
+      type: object
+      additionalProperties: false
+      required: [title, content, topicId]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        content:
+          type: string
+          minLength: 1
+        topicId:
+          type: string
+          format: uuid
+
+    AuthorResponseDto:
+      type: object
+      additionalProperties: false
+      required: [id, username]
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+
+    ArticleSummaryResponseDto:
+      type: object
+      required: [id, title, slug, author, topic, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        slug:
+          type: string
+        author:
+          $ref: '#/components/schemas/AuthorResponseDto'
+        topic:
+          $ref: '#/components/schemas/TopicResponseDto'
+        createdAt:
+          type: string
+          format: date-time
+
+    ArticleDetailResponseDto:
+      allOf:
+        - $ref: '#/components/schemas/ArticleSummaryResponseDto'
+        - type: object
+          required: [content, updatedAt, commentCount]
+          properties:
+            content:
+              type: string
+            updatedAt:
+              type: string
+              format: date-time
+            commentCount:
+              type: integer
+              minimum: 0
+
+    ArticlePageResponseDto:
+      type: object
+      additionalProperties: false
+      required: [content, page, size, totalElements, totalPages]
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArticleSummaryResponseDto'
+        page:
+          type: integer
+          minimum: 0
+        size:
+          type: integer
+          minimum: 1
+        totalElements:
+          type: integer
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0
+
+    CreateCommentRequestDto:
+      type: object
+      additionalProperties: false
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+
+    CommentResponseDto:
+      type: object
+      additionalProperties: false
+      required: [id, content, author, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        author:
+          $ref: '#/components/schemas/AuthorResponseDto'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CommentPageResponseDto:
+      type: object
+      additionalProperties: false
+      required: [content, page, size, totalElements, totalPages]
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentResponseDto'
+        page:
+          type: integer
+          minimum: 0
+        size:
+          type: integer
+          minimum: 1
+        totalElements:
+          type: integer
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0
+
+    ProblemDetail:
+      type: object
+      required: [type, title, status, detail, instance]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+
+    ValidationProblemDetail:
+      allOf:
+        - $ref: '#/components/schemas/ProblemDetail'
+        - type: object
+          required: [errors]
+          properties:
+            errors:
+              type: object
+              additionalProperties:
+                type: string
