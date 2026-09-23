@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/orion}
+    username: ${DB_USERNAME:orion}
+    password: ${DB_PASSWORD:orion}
+    driver-class-name: org.postgresql.Driver
