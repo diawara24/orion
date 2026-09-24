@@ -190,6 +190,7 @@
 						</goals>
 
 						<configuration>
+							<addCompileSourceRoot>true</addCompileSourceRoot>
 							<inputSpec>
 								${project.basedir}/../openapi/openapi.yaml
 							</inputSpec>
@@ -216,6 +217,25 @@
 								<openApiNullable>false</openApiNullable>
 								<documentationProvider>none</documentationProvider>
 							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.6.1</version>
+				<executions>
+					<execution>
+						<id>add-openapi-generated-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+							</sources>
 						</configuration>
 					</execution>
 				</executions>

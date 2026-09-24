@@ -7,7 +7,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.backend.security.JwtService;
+import com.example.backend.user.Role;
+import com.example.backend.user.User;
 import com.example.backend.user.UserRepository;
+import java.util.UUID;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +45,9 @@ class AuthenticationControllerIT {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtService jwtService;
 
     @BeforeEach
     void cleanDatabase() {
@@ -131,7 +140,11 @@ class AuthenticationControllerIT {
 
         String accessToken = response.get("accessToken").asString();
 
-        assertThat(jwtDecoder.decode(accessToken).getSubject()).isNotBlank();
+        Jwt jwt = jwtDecoder.decode(accessToken);
+
+        assertThat(jwt.getSubject()).isNotBlank();
+        assertThat(jwt.getClaimAsString("username")).isEqualTo("orlando");
+        assertThat(jwt.getClaimAsStringList("roles")).containsExactly("USER");
     }
 
     @Test
@@ -163,5 +176,29 @@ class AuthenticationControllerIT {
                         MediaType.APPLICATION_PROBLEM_JSON
                 ))
                 .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
+    }
+
+    @Test
+    void shouldForbidUserRoleFromTopicAdministration() throws Exception {
+        User user = User.builder()
+                .id(UUID.randomUUID())
+                .username("orlando")
+                .email("orlando@example.com")
+                .passwordHash("hashed-password")
+                .role(Role.USER)
+                .build();
+
+        String accessToken = jwtService.generateAccessToken(user);
+
+        mockMvc.perform(post("/api/v1/topics")
+                        .contextPath("/api/v1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Java\"}"))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
     }
 }
