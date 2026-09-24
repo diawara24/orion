@@ -7,7 +7,6 @@ import com.example.backend.generated.model.UserResponseDto;
 import com.example.backend.user.User;
 import com.example.backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,11 +37,6 @@ public class RegistrationService {
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .build();
 
-        try {
-            return userMapper.toResponseDto(userRepository.saveAndFlush(user));
-        } catch (DataIntegrityViolationException exception) {
-            // Protège contre deux inscriptions concurrentes.
-            throw new ConflictException();
-        }
+        return userMapper.toResponseDto(userRepository.save(user));
     }
 }

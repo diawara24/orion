@@ -20,7 +20,7 @@ class UserRepositoryTest {
 
     @Test
     void shouldFindUserByUsernameOrEmail() {
-        User savedUser = userRepository.saveAndFlush(
+        User savedUser = userRepository.save(
                 User.builder()
                         .username("orlando")
                         .email("orlando@example.com")

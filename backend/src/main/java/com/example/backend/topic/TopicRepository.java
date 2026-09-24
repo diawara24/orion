@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface TopicRepository extends JpaRepository<Topic, UUID> {
 
     boolean existsByName(String name);
+
+    boolean existsByNameAndIdNot(String name, UUID id);
 }

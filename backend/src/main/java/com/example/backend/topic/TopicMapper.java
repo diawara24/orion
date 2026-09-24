@@ -1,9 +1,7 @@
-package com.example.backend.auth;
-
+package com.example.backend.topic;
 
 import com.example.backend.common.mapper.DateTimeMapper;
-import com.example.backend.generated.model.UserResponseDto;
-import com.example.backend.user.User;
+import com.example.backend.generated.model.TopicAdminResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -13,9 +11,9 @@ import org.mapstruct.ReportingPolicy;
         uses = DateTimeMapper.class,
         unmappedTargetPolicy = ReportingPolicy.ERROR
 )
-public interface UserMapper {
+public interface TopicMapper {
 
     @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "instantToOffsetDateTime")
     @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "instantToOffsetDateTime")
-    UserResponseDto toResponseDto(User user);
+    TopicAdminResponseDto toAdminResponseDto(Topic topic);
 }

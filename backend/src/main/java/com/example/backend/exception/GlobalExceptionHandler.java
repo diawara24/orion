@@ -6,6 +6,8 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -128,6 +130,27 @@ public class GlobalExceptionHandler {
                 exception.getDetailMessageCode(),
                 request,
                 exception.getMessageArguments()
+        );
+    }
+
+    @ExceptionHandler({DataIntegrityViolationException.class, OptimisticLockingFailureException.class})
+    public ProblemDetail handlePersistenceConflict(
+            Exception exception,
+            HttpServletRequest request
+    ) {
+        log.warn(
+                "Persistence conflict: method={}, path={}, exception={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                exception.getClass().getSimpleName()
+        );
+
+        return createProblem(
+                HttpStatus.CONFLICT,
+                ProblemCodes.RESOURCE_CONFLICT,
+                "error.conflict.title",
+                "error.conflict.detail",
+                request
         );
     }
 

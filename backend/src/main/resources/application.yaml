@@ -2,6 +2,10 @@ server:
   servlet:
     context-path: /api/v1
 
+springdoc:
+  swagger-ui:
+    url: /api/v1/openapi.yaml
+
 spring:
   devtools:
     restart:

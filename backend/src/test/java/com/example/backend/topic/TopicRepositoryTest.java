@@ -22,7 +22,7 @@ class TopicRepositoryTest {
 
     @Test
     void shouldPersistTopicAndFindItByName() {
-        Topic savedTopic = topicRepository.saveAndFlush(
+        Topic savedTopic = topicRepository.save(
                 Topic.builder().name("security").build()
         );
 
@@ -32,10 +32,10 @@ class TopicRepositoryTest {
 
     @Test
     void shouldRejectDuplicateTopicName() {
-        topicRepository.saveAndFlush(Topic.builder().name("security").build());
+        topicRepository.save(Topic.builder().name("security").build());
+        topicRepository.save(Topic.builder().name("security").build());
 
-        assertThatThrownBy(() -> topicRepository.saveAndFlush(
-                Topic.builder().name("security").build()
-        )).isInstanceOf(DataIntegrityViolationException.class);
+        assertThatThrownBy(topicRepository::flush)
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 }

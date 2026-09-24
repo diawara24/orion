@@ -51,8 +51,9 @@ class SubscriptionRepositoryTest {
         User user = saveUser();
         Topic topic = saveTopic();
         saveSubscription(user, topic);
+        saveSubscription(user, topic);
 
-        assertThatThrownBy(() -> saveSubscription(user, topic))
+        assertThatThrownBy(subscriptionRepository::flush)
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -62,7 +63,6 @@ class SubscriptionRepositoryTest {
         Subscription subscription = saveSubscription(user, saveTopic());
 
         userRepository.delete(user);
-        userRepository.flush();
 
         assertThat(subscriptionRepository.existsById(subscription.getId())).isFalse();
     }
@@ -73,13 +73,12 @@ class SubscriptionRepositoryTest {
         Subscription subscription = saveSubscription(saveUser(), topic);
 
         topicRepository.delete(topic);
-        topicRepository.flush();
 
         assertThat(subscriptionRepository.existsById(subscription.getId())).isFalse();
     }
 
     private User saveUser() {
-        return userRepository.saveAndFlush(User.builder()
+        return userRepository.save(User.builder()
                 .username("orlando")
                 .email("orlando@example.com")
                 .passwordHash("hashed-password")
@@ -87,13 +86,13 @@ class SubscriptionRepositoryTest {
     }
 
     private Topic saveTopic() {
-        return topicRepository.saveAndFlush(Topic.builder()
+        return topicRepository.save(Topic.builder()
                 .name("security")
                 .build());
     }
 
     private Subscription saveSubscription(User user, Topic topic) {
-        return subscriptionRepository.saveAndFlush(Subscription.builder()
+        return subscriptionRepository.save(Subscription.builder()
                 .user(user)
                 .topic(topic)
                 .build());

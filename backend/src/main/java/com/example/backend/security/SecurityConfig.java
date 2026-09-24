@@ -54,7 +54,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/openapi.yaml").permitAll()
                         .requestMatchers(HttpMethod.POST, "/topics").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/topics/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/topics/*").hasRole("ADMIN")

@@ -51,14 +51,14 @@ class RegistrationServiceTest {
         when(userRepository.existsByUsername("orlando")).thenReturn(false);
         when(userRepository.existsByEmail("orlando@example.com")).thenReturn(false);
         when(passwordEncoder.encode("Orion2026!")).thenReturn("hashed-password");
-        when(userRepository.saveAndFlush(any(User.class)))
+        when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         when(userMapper.toResponseDto(any(User.class))).thenReturn(expectedResponse);
 
         UserResponseDto actualResponse = registrationService.register(request);
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userRepository).saveAndFlush(userCaptor.capture());
+        verify(userRepository).save(userCaptor.capture());
 
         User savedUser = userCaptor.getValue();
         assertThat(savedUser.getUsername()).isEqualTo("orlando");
@@ -84,7 +84,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    void shouldConvertDatabaseUniqueConstraintViolationToConflict() {
+    void shouldPropagateDatabaseUniqueConstraintViolation() {
         RegisterRequestDto request = new RegisterRequestDto(
                 "orlando",
                 "orlando@example.com",
@@ -94,10 +94,10 @@ class RegistrationServiceTest {
         when(userRepository.existsByUsername("orlando")).thenReturn(false);
         when(userRepository.existsByEmail("orlando@example.com")).thenReturn(false);
         when(passwordEncoder.encode("Orion2026!")).thenReturn("hashed-password");
-        when(userRepository.saveAndFlush(any(User.class)))
+        when(userRepository.save(any(User.class)))
                 .thenThrow(new DataIntegrityViolationException("duplicate key"));
 
         assertThatThrownBy(() -> registrationService.register(request))
-                .isInstanceOf(ConflictException.class);
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 }
