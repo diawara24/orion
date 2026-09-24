@@ -3,6 +3,9 @@ server:
     context-path: /api/v1
 
 spring:
+  devtools:
+    restart:
+      enabled: false
   application:
     name: orion-backend
   profiles:

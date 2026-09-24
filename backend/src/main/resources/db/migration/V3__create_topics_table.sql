@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS topics (
+    id UUID NOT NULL DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT topics_pkey PRIMARY KEY (id),
+    CONSTRAINT topics_name_unique UNIQUE (name)
+);
