@@ -108,6 +108,68 @@ class ArticleControllerIT {
                 .andExpect(jsonPath("$.commentCount").value(0));
     }
 
+    @Test
+    void shouldReturnOnlySubscribedArticlesWithPaginationAndSorting() throws Exception {
+        User user = createUser("orlando");
+        Topic subscribedTopic = createTopic("Spring Boot");
+        Topic otherTopic = createTopic("Angular");
+        subscriptionRepository.save(Subscription.builder().user(user).topic(subscribedTopic).build());
+
+        Article olderArticle = createArticle(user, subscribedTopic, "Premier article", "premier-article");
+        Article newerArticle = createArticle(user, subscribedTopic, "Second article", "second-article");
+        createArticle(user, otherTopic, "Article exclu", "article-exclu");
+
+        mockMvc.perform(get(CONTEXT_PATH + "/articles")
+                        .contextPath(CONTEXT_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, bearerTokenFor(user))
+                        .param("sort", "oldest")
+                        .param("page", "0")
+                        .param("size", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(olderArticle.getId().toString()))
+                .andExpect(jsonPath("$.content[0].topic.subscribed").value(true))
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.size").value(1))
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.totalPages").value(2));
+
+        mockMvc.perform(get(CONTEXT_PATH + "/articles")
+                        .contextPath(CONTEXT_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, bearerTokenFor(user))
+                        .param("sort", "newest")
+                        .param("page", "0")
+                        .param("size", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(newerArticle.getId().toString()));
+    }
+
+    @Test
+    void shouldRejectUnsupportedFeedSort() throws Exception {
+        User user = createUser("orlando");
+
+        mockMvc.perform(get(CONTEXT_PATH + "/articles")
+                        .contextPath(CONTEXT_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, bearerTokenFor(user))
+                        .param("sort", "title"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.errors.sort").value("La valeur doit être \"newest\" ou \"oldest\"."));
+    }
+
+    @Test
+    void shouldRejectInvalidFeedPagination() throws Exception {
+        User user = createUser("orlando");
+
+        mockMvc.perform(get(CONTEXT_PATH + "/articles")
+                        .contextPath(CONTEXT_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, bearerTokenFor(user))
+                        .param("page", "-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.errors.page").exists());
+    }
+
     private User createUser(String username) {
         return userRepository.save(User.builder()
                 .username(username)
@@ -119,6 +181,16 @@ class ArticleControllerIT {
 
     private Topic createTopic(String name) {
         return topicRepository.save(Topic.builder().name(name).build());
+    }
+
+    private Article createArticle(User author, Topic topic, String title, String slug) {
+        return articleRepository.saveAndFlush(Article.builder()
+                .title(title)
+                .slug(slug)
+                .content("Contenu de l'article.")
+                .author(author)
+                .topic(topic)
+                .build());
     }
 
     private String bearerTokenFor(User user) {

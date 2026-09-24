@@ -2,6 +2,7 @@ package com.example.backend.article;
 
 import com.example.backend.generated.api.ArticlesApi;
 import com.example.backend.generated.model.ArticleDetailResponseDto;
+import com.example.backend.generated.model.ArticlePageResponseDto;
 import com.example.backend.generated.model.CreateArticleRequestDto;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class ArticleController implements ArticlesApi {
 
     private final ArticleService articleService;
+
+    @Override
+    public ResponseEntity<ArticlePageResponseDto> getSubscribedArticles(
+            String sort,
+            Integer page,
+            Integer size
+    ) {
+        return ResponseEntity.ok(articleService.getSubscribedArticles(sort, page, size));
+    }
 
 
     /**

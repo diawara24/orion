@@ -149,6 +149,29 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(InvalidRequestParameterException.class)
+    public ProblemDetail handleInvalidRequestParameter(
+            InvalidRequestParameterException exception,
+            HttpServletRequest request
+    ) {
+        log.warn(
+                "Invalid request parameter: method={}, path={}, parameter={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                exception.getParameter()
+        );
+
+        ProblemDetail problem = createProblem(
+                exception.getStatus(),
+                exception.getCode(),
+                exception.getTitleMessageCode(),
+                exception.getDetailMessageCode(),
+                request
+        );
+        problem.setProperty("errors", Map.of(exception.getParameter(), exception.getValidationMessage()));
+        return problem;
+    }
+
     @ExceptionHandler({DataIntegrityViolationException.class, OptimisticLockingFailureException.class})
     public ProblemDetail handlePersistenceConflict(
             Exception exception,

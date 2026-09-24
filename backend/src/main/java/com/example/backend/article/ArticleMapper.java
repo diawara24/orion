@@ -2,6 +2,7 @@ package com.example.backend.article;
 
 import com.example.backend.common.mapper.DateTimeMapper;
 import com.example.backend.generated.model.ArticleDetailResponseDto;
+import com.example.backend.generated.model.ArticleSummaryResponseDto;
 import com.example.backend.generated.model.AuthorResponseDto;
 import com.example.backend.generated.model.TopicResponseDto;
 import com.example.backend.topic.Topic;
@@ -21,6 +22,9 @@ public interface ArticleMapper {
     @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "instantToOffsetDateTime")
     @Mapping(target = "commentCount", ignore = true)
     ArticleDetailResponseDto toDetailResponseDto(Article article);
+
+    @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "instantToOffsetDateTime")
+    ArticleSummaryResponseDto toSummaryResponseDto(Article article);
 
     AuthorResponseDto toAuthorResponseDto(User user);
 

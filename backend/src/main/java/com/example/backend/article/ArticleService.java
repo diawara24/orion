@@ -1,7 +1,10 @@
 package com.example.backend.article;
 
+import com.example.backend.exception.InvalidRequestParameterException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.generated.model.ArticleDetailResponseDto;
+import com.example.backend.generated.model.ArticlePageResponseDto;
+import com.example.backend.generated.model.ArticleSummaryResponseDto;
 import com.example.backend.generated.model.CreateArticleRequestDto;
 import com.example.backend.generated.model.TopicResponseDto;
 import com.example.backend.security.SecurityUtils;
@@ -14,12 +17,18 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ArticleService {
+
+    private static final String NEWEST = "newest";
+    private static final String OLDEST = "oldest";
 
     private final ArticleRepository articleRepository;
     private final TopicRepository topicRepository;
@@ -63,6 +72,23 @@ public class ArticleService {
         return toDetailResponseDto(article, userId);
     }
 
+    @Transactional(readOnly = true)
+    public ArticlePageResponseDto getSubscribedArticles(String sort, int page, int size) {
+        UUID userId = SecurityUtils.getCurrentUserId();
+        Page<Article> articlePage = articleRepository.findSubscribedByUserId(
+                userId,
+                PageRequest.of(page, size, resolveSort(sort))
+        );
+
+        return new ArticlePageResponseDto(
+                articlePage.getContent().stream().map(this::toSummaryResponseDto).toList(),
+                articlePage.getNumber(),
+                articlePage.getSize(),
+                Math.toIntExact(articlePage.getTotalElements()),
+                articlePage.getTotalPages()
+        );
+    }
+
     private User findUser(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("L'utilisateur", userId));
@@ -79,5 +105,24 @@ public class ArticleService {
         topic.setSubscribed(subscriptionRepository.existsByUserIdAndTopicId(userId, topic.getId()));
         response.setCommentCount(0);
         return response;
+    }
+
+    private ArticleSummaryResponseDto toSummaryResponseDto(Article article) {
+        ArticleSummaryResponseDto response = articleMapper.toSummaryResponseDto(article);
+        response.getTopic().setSubscribed(true);
+        return response;
+    }
+
+    private Sort resolveSort(String sort) {
+        Sort.Direction direction = switch (sort) {
+            case NEWEST -> Sort.Direction.DESC;
+            case OLDEST -> Sort.Direction.ASC;
+            default -> throw new InvalidRequestParameterException(
+                    "sort",
+                    "La valeur doit être \"newest\" ou \"oldest\"."
+            );
+        };
+
+        return Sort.by(direction, "createdAt").and(Sort.by(direction, "id"));
     }
 }
