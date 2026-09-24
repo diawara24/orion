@@ -8,6 +8,10 @@ public final class ProblemCodes {
     public static final String RESOURCE_CONFLICT = "RESOURCE_CONFLICT";
     public static final String INTERNAL_ERROR = "INTERNAL_ERROR";
 
+    public static final String UNAUTHORIZED = "UNAUTHORIZED";
+    public static final String ACCESS_DENIED = "ACCESS_DENIED";
+    public static final String INVALID_CREDENTIALS = "INVALID_CREDENTIALS";
+
     private ProblemCodes() {
     }
 }
