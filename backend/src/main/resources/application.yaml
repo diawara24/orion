@@ -15,7 +15,6 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
-        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
 
   flyway:
@@ -36,4 +35,4 @@ app:
       issuer: ${JWT_ISSUER:orion-api}
       access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:PT3H15M}
       key-id: ${JWT_KEY_ID:orion-key-1}
-      secret: ${JWT_SECRET:je-suis-le-secret-jwt}
+      secret: ${JWT_SECRET}
