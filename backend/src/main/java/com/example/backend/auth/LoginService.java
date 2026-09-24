@@ -6,6 +6,7 @@ import com.example.backend.generated.model.LoginResponseDto;
 import com.example.backend.generated.model.UserResponseDto;
 import com.example.backend.security.JwtService;
 import com.example.backend.user.User;
+import com.example.backend.user.UserMapper;
 import com.example.backend.user.UserRepository;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class LoginService {
             throw new InvalidCredentialsException();
         }
 
-        UserResponseDto userResponse = userMapper.toResponseDto(user);
+        UserResponseDto userResponse = userMapper.toUserResponseDto(user);
 
         return new LoginResponseDto(
                 jwtService.generateAccessToken(user),

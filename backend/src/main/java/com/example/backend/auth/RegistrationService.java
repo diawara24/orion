@@ -5,6 +5,7 @@ import com.example.backend.exception.ConflictException;
 import com.example.backend.generated.model.RegisterRequestDto;
 import com.example.backend.generated.model.UserResponseDto;
 import com.example.backend.user.User;
+import com.example.backend.user.UserMapper;
 import com.example.backend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +38,6 @@ public class RegistrationService {
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .build();
 
-        return userMapper.toResponseDto(userRepository.save(user));
+        return userMapper.toUserResponseDto(userRepository.save(user));
     }
 }

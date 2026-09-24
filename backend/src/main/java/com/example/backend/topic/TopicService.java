@@ -84,6 +84,15 @@ public class TopicService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<TopicResponseDto> getCurrentUserSubscriptions() {
+        UUID userId = SecurityUtils.getCurrentUserId();
+
+        return subscriptionRepository.findTopicsByUserId(userId).stream()
+                .map(this::toSubscribedResponseDto)
+                .toList();
+    }
+
     @Transactional
     public void subscribe(UUID topicId) {
         UUID userId = SecurityUtils.getCurrentUserId();
@@ -119,6 +128,12 @@ public class TopicService {
     private TopicResponseDto toResponseDto(Topic topic, Set<UUID> subscribedTopicIds) {
         TopicResponseDto response = topicMapper.toResponseDto(topic);
         response.setSubscribed(subscribedTopicIds.contains(topic.getId()));
+        return response;
+    }
+
+    private TopicResponseDto toSubscribedResponseDto(Topic topic) {
+        TopicResponseDto response = topicMapper.toResponseDto(topic);
+        response.setSubscribed(true);
         return response;
     }
 }

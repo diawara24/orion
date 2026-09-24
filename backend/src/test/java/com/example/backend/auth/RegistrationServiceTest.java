@@ -11,6 +11,7 @@ import com.example.backend.exception.ConflictException;
 import com.example.backend.generated.model.RegisterRequestDto;
 import com.example.backend.generated.model.UserResponseDto;
 import com.example.backend.user.User;
+import com.example.backend.user.UserMapper;
 import com.example.backend.user.UserRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ class RegistrationServiceTest {
         when(passwordEncoder.encode("Orion2026!")).thenReturn("hashed-password");
         when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
-        when(userMapper.toResponseDto(any(User.class))).thenReturn(expectedResponse);
+        when(userMapper.toUserResponseDto(any(User.class))).thenReturn(expectedResponse);
 
         UserResponseDto actualResponse = registrationService.register(request);
 

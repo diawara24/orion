@@ -133,6 +133,22 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidCurrentPasswordException.class)
+    public ProblemDetail handleInvalidCurrentPassword(
+            InvalidCurrentPasswordException exception,
+            HttpServletRequest request
+    ) {
+        ProblemDetail problem = createProblem(
+                exception.getStatus(),
+                exception.getCode(),
+                exception.getTitleMessageCode(),
+                exception.getDetailMessageCode(),
+                request
+        );
+        problem.setProperty("errors", Map.of("currentPassword", "La valeur est invalide."));
+        return problem;
+    }
+
     @ExceptionHandler({DataIntegrityViolationException.class, OptimisticLockingFailureException.class})
     public ProblemDetail handlePersistenceConflict(
             Exception exception,

@@ -27,14 +27,35 @@ public class TopicController implements TopicsApi {
                 .body(topicService.create(createTopicRequestDto));
     }
 
+    /**
+     * PATCH /topics/{topicId} : Renommer un thème
+     * Réservé à un administrateur.
+     *
+     * @param topicId               (required)
+     * @param updateTopicRequestDto (required)
+     * @return Thème mis à jour (status code 200)
+     * or Données envoyées invalides (status code 400)
+     * or Authentification requise ou identifiants invalides (status code 401)
+     * or Action non autorisée (status code 403)
+     * or Ressource introuvable (status code 404)
+     * or Conflit avec l&#39;état actuel de la ressource (status code 409)
+     */
     @Override
-    public ResponseEntity<TopicAdminResponseDto> updateTopic(
-            UUID topicId,
-            UpdateTopicRequestDto updateTopicRequestDto
-    ) {
+    public ResponseEntity<TopicAdminResponseDto> updateTopic(UUID topicId, UpdateTopicRequestDto updateTopicRequestDto) {
         return ResponseEntity.ok(topicService.update(topicId, updateTopicRequestDto));
     }
 
+    /**
+     * DELETE /topics/{topicId} : Supprimer un thème
+     * Réservé à un administrateur. Refusé si le thème possède des articles.
+     *
+     * @param topicId (required)
+     * @return Thème supprimé (status code 204)
+     * or Authentification requise ou identifiants invalides (status code 401)
+     * or Action non autorisée (status code 403)
+     * or Ressource introuvable (status code 404)
+     * or Conflit avec l&#39;état actuel de la ressource (status code 409)
+     */
     @Override
     public ResponseEntity<Void> deleteTopic(UUID topicId) {
         topicService.delete(topicId);

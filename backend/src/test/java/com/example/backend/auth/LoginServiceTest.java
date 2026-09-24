@@ -12,6 +12,7 @@ import com.example.backend.generated.model.LoginRequestDto;
 import com.example.backend.generated.model.UserResponseDto;
 import com.example.backend.security.JwtService;
 import com.example.backend.user.User;
+import com.example.backend.user.UserMapper;
 import com.example.backend.user.UserRepository;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,7 +61,7 @@ class LoginServiceTest {
                 "orlando@example.com"
         )).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("Orion2026!", "hashed-password")).thenReturn(true);
-        when(userMapper.toResponseDto(user)).thenReturn(userResponse);
+        when(userMapper.toUserResponseDto(user)).thenReturn(userResponse);
         when(jwtService.generateAccessToken(user)).thenReturn("jwt-token");
 
         var response = loginService.login(request);
@@ -111,6 +112,6 @@ class LoginServiceTest {
                 .isInstanceOf(InvalidCredentialsException.class);
 
         verify(jwtService, never()).generateAccessToken(any());
-        verify(userMapper, never()).toResponseDto(any());
+        verify(userMapper, never()).toUserResponseDto(any());
     }
 }
