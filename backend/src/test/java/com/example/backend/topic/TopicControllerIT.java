@@ -2,15 +2,20 @@ package com.example.backend.topic;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.backend.security.JwtService;
+import com.example.backend.subscription.Subscription;
+import com.example.backend.subscription.SubscriptionRepository;
 import com.example.backend.user.Role;
 import com.example.backend.user.User;
+import com.example.backend.user.UserRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,11 +41,19 @@ class TopicControllerIT {
     private TopicRepository topicRepository;
 
     @Autowired
+    private SubscriptionRepository subscriptionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private JwtService jwtService;
 
     @BeforeEach
     void cleanDatabase() {
+        subscriptionRepository.deleteAll();
         topicRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -105,6 +118,56 @@ class TopicControllerIT {
         assertThat(topicRepository.existsById(topic.getId())).isFalse();
     }
 
+    @Test
+    void shouldReturnSubscriptionStatusForCurrentUser() throws Exception {
+        User user = createUser("member");
+        Topic topic = topicRepository.save(Topic.builder().name("Spring Boot").build());
+        subscriptionRepository.save(Subscription.builder().user(user).topic(topic).build());
+
+        mockMvc.perform(get(CONTEXT_PATH + "/topics")
+                        .contextPath(CONTEXT_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, bearerTokenFor(user)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(topic.getId().toString()))
+                .andExpect(jsonPath("$[0].name").value("Spring Boot"))
+                .andExpect(jsonPath("$[0].subscribed").value(true));
+    }
+
+    @Test
+    void shouldSubscribeOnlyOnceWhenRequestIsRepeated() throws Exception {
+        User user = createUser("member");
+        Topic topic = topicRepository.save(Topic.builder().name("Spring Boot").build());
+        String authorization = bearerTokenFor(user);
+
+        mockMvc.perform(put(CONTEXT_PATH + "/topics/{topicId}/subscription", topic.getId())
+                        .contextPath(CONTEXT_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, authorization))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(put(CONTEXT_PATH + "/topics/{topicId}/subscription", topic.getId())
+                        .contextPath(CONTEXT_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, authorization))
+                .andExpect(status().isNoContent());
+
+        assertThat(subscriptionRepository.countByUserIdAndTopicId(user.getId(), topic.getId()))
+                .isEqualTo(1);
+    }
+
+    @Test
+    void shouldUnsubscribeFromTopic() throws Exception {
+        User user = createUser("member");
+        Topic topic = topicRepository.save(Topic.builder().name("Spring Boot").build());
+        subscriptionRepository.save(Subscription.builder().user(user).topic(topic).build());
+
+        mockMvc.perform(delete(CONTEXT_PATH + "/topics/{topicId}/subscription", topic.getId())
+                        .contextPath(CONTEXT_PATH)
+                        .header(HttpHeaders.AUTHORIZATION, bearerTokenFor(user)))
+                .andExpect(status().isNoContent());
+
+        assertThat(subscriptionRepository.countByUserIdAndTopicId(user.getId(), topic.getId()))
+                .isZero();
+    }
+
     private String bearerTokenForAdmin() {
         User admin = User.builder()
                 .id(UUID.randomUUID())
@@ -114,6 +177,19 @@ class TopicControllerIT {
                 .role(Role.ADMIN)
                 .build();
 
-        return "Bearer " + jwtService.generateAccessToken(admin);
+        return bearerTokenFor(admin);
+    }
+
+    private User createUser(String username) {
+        return userRepository.save(User.builder()
+                .username(username)
+                .email(username + "@example.com")
+                .passwordHash("unused")
+                .role(Role.USER)
+                .build());
+    }
+
+    private String bearerTokenFor(User user) {
+        return "Bearer " + jwtService.generateAccessToken(user);
     }
 }
