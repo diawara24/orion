@@ -1,9 +1,13 @@
 package com.example.backend.article;
 
+import com.example.backend.comment.CommentService;
 import com.example.backend.generated.api.ArticlesApi;
 import com.example.backend.generated.model.ArticleDetailResponseDto;
 import com.example.backend.generated.model.ArticlePageResponseDto;
+import com.example.backend.generated.model.CommentPageResponseDto;
+import com.example.backend.generated.model.CommentResponseDto;
 import com.example.backend.generated.model.CreateArticleRequestDto;
+import com.example.backend.generated.model.CreateCommentRequestDto;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +19,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class ArticleController implements ArticlesApi {
 
     private final ArticleService articleService;
+    private final CommentService commentService;
+
+    @Override
+    public ResponseEntity<CommentResponseDto> createComment(
+            UUID articleId,
+            CreateCommentRequestDto createCommentRequestDto
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(commentService.create(articleId, createCommentRequestDto));
+    }
+
+    @Override
+    public ResponseEntity<CommentPageResponseDto> getArticleComments(
+            UUID articleId,
+            Integer page,
+            Integer size
+    ) {
+        return ResponseEntity.ok(commentService.getByArticleId(articleId, page, size));
+    }
 
     @Override
     public ResponseEntity<ArticlePageResponseDto> getSubscribedArticles(

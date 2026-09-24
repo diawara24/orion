@@ -1,5 +1,6 @@
 package com.example.backend.article;
 
+import com.example.backend.comment.CommentRepository;
 import com.example.backend.exception.InvalidRequestParameterException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.generated.model.ArticleDetailResponseDto;
@@ -31,6 +32,7 @@ public class ArticleService {
     private static final String OLDEST = "oldest";
 
     private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
     private final TopicRepository topicRepository;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
@@ -103,7 +105,7 @@ public class ArticleService {
         ArticleDetailResponseDto response = articleMapper.toDetailResponseDto(article);
         TopicResponseDto topic = response.getTopic();
         topic.setSubscribed(subscriptionRepository.existsByUserIdAndTopicId(userId, topic.getId()));
-        response.setCommentCount(0);
+        response.setCommentCount(Math.toIntExact(commentRepository.countByArticleId(article.getId())));
         return response;
     }
 
