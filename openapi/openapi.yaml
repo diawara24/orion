@@ -13,12 +13,11 @@ tags:
   - name: Authentication
   - name: Users
   - name: Topics
-  - name: Feed
   - name: Articles
   - name: Comments
 
 security:
-  - cookieAuth: []
+  - bearerAuth: []
 
 paths:
   /auth/register:
@@ -59,34 +58,13 @@ paths:
               $ref: '#/components/schemas/LoginRequestDto'
       responses:
         '200':
-          description: Connexion réussie et session créée
-          headers:
-            Set-Cookie:
-              description: Cookie de session HTTP-only sécurisé
-              schema:
-                type: string
+          description: Connexion réussie et jeton Bearer émis
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponseDto'
+                $ref: '#/components/schemas/LoginResponseDto'
         '400':
           $ref: '#/components/responses/ValidationProblem'
-        '401':
-          $ref: '#/components/responses/UnauthorizedProblem'
-
-  /auth/logout:
-    post:
-      tags: [Authentication]
-      summary: Se déconnecter
-      operationId: logout
-      responses:
-        '204':
-          description: Session supprimée
-          headers:
-            Set-Cookie:
-              description: Cookie de session supprimé
-              schema:
-                type: string
         '401':
           $ref: '#/components/responses/UnauthorizedProblem'
 
@@ -127,19 +105,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedProblem'
         '409':
           $ref: '#/components/responses/ConflictProblem'
-    delete:
-      tags: [Users]
-      summary: Désactiver son compte
-      description: La suppression est refusée si le compte possède encore des articles ou commentaires.
-      operationId: deactivateCurrentUser
-      responses:
-        '204':
-          description: Compte désactivé
-        '401':
-          $ref: '#/components/responses/UnauthorizedProblem'
-        '409':
-          $ref: '#/components/responses/ConflictProblem'
-
   /topics:
     get:
       tags: [Topics]
@@ -156,8 +121,64 @@ paths:
                   $ref: '#/components/schemas/TopicResponseDto'
         '401':
           $ref: '#/components/responses/UnauthorizedProblem'
+    post:
+      tags: [Topics]
+      summary: Créer un thème
+      description: Réservé à un administrateur.
+      operationId: createTopic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTopicRequestDto'
+      responses:
+        '201':
+          description: Thème créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicAdminResponseDto'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '403':
+          $ref: '#/components/responses/ForbiddenProblem'
+        '409':
+          $ref: '#/components/responses/ConflictProblem'
 
   /topics/{topicId}:
+    patch:
+      tags: [Topics]
+      summary: Renommer un thème
+      description: Réservé à un administrateur.
+      operationId: updateTopic
+      parameters:
+        - $ref: '#/components/parameters/TopicId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTopicRequestDto'
+      responses:
+        '200':
+          description: Thème mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicAdminResponseDto'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/UnauthorizedProblem'
+        '403':
+          $ref: '#/components/responses/ForbiddenProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundProblem'
+        '409':
+          $ref: '#/components/responses/ConflictProblem'
     delete:
       tags: [Topics]
       summary: Supprimer un thème
@@ -206,11 +227,12 @@ paths:
         '404':
           $ref: '#/components/responses/NotFoundProblem'
 
-  /feed:
+  /articles:
     get:
-      tags: [Feed]
+      tags: [Articles]
       summary: Consulter son fil d'actualité
-      operationId: getFeed
+      description: Retourne les articles des thèmes suivis par l'utilisateur connecté.
+      operationId: getSubscribedArticles
       parameters:
         - $ref: '#/components/parameters/Sort'
         - $ref: '#/components/parameters/Page'
@@ -224,8 +246,6 @@ paths:
                 $ref: '#/components/schemas/ArticlePageResponseDto'
         '401':
           $ref: '#/components/responses/UnauthorizedProblem'
-
-  /articles:
     post:
       tags: [Articles]
       summary: Publier un article
@@ -287,7 +307,7 @@ paths:
 
   /articles/{articleId}/comments:
     get:
-      tags: [Comments]
+      tags: [Articles]
       summary: Lister les commentaires d'un article
       operationId: getArticleComments
       parameters:
@@ -306,7 +326,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFoundProblem'
     post:
-      tags: [Comments]
+      tags: [Articles]
       summary: Ajouter un commentaire
       operationId: createComment
       parameters:
@@ -351,11 +371,11 @@ paths:
 
 components:
   securitySchemes:
-    cookieAuth:
-      type: apiKey
-      in: cookie
-      name: ORION_SESSION
-      description: Cookie de session HTTP-only fourni après la connexion.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Jeton JWT transmis dans l'en-tête Authorization.
 
   parameters:
     TopicId:
@@ -463,17 +483,31 @@ components:
     LoginRequestDto:
       type: object
       additionalProperties: false
-      required: [identifier, password]
+      required: [username, password]
       properties:
-        identifier:
+        username:
           type: string
-          description: E-mail ou nom d'utilisateur
+          description: Nom d'utilisateur ou e-mail.
           minLength: 1
           maxLength: 255
         password:
           type: string
           format: password
           minLength: 1
+
+    LoginResponseDto:
+      type: object
+      additionalProperties: false
+      required: [accessToken, tokenType, user]
+      properties:
+        accessToken:
+          type: string
+          description: Jeton JWT à transmettre dans Authorization Bearer.
+        tokenType:
+          type: string
+          const: Bearer
+        user:
+          $ref: '#/components/schemas/UserResponseDto'
 
     UpdateUserRequestDto:
       type: object
@@ -542,6 +576,43 @@ components:
           type: string
         subscribed:
           type: boolean
+
+    TopicAdminResponseDto:
+      type: object
+      additionalProperties: false
+      required: [id, name, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateTopicRequestDto:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+
+    UpdateTopicRequestDto:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
 
     CreateArticleRequestDto:
       type: object
@@ -692,6 +763,8 @@ components:
         instance:
           type: string
           format: uri-reference
+        code:
+          type: string
 
     ValidationProblemDetail:
       allOf:
