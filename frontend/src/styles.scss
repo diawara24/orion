@@ -1,1 +1,59 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --orion-primary: #2457a6;
+  --orion-primary-hover: #193f7c;
+  --orion-text: #182230;
+  --orion-text-muted: #5d6b7a;
+  --orion-background: #f7f9fc;
+  --orion-surface: #ffffff;
+  --orion-border: #dbe3ee;
+  --orion-danger: #b42318;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  color-scheme: light;
+}
+
+body {
+  min-width: 20rem;
+  min-height: 100dvh;
+  margin: 0;
+  color: var(--orion-text);
+  background: var(--orion-background);
+  font-family: Roboto, Arial, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid color-mix(
+    in srgb,
+    var(--orion-primary) 45%,
+    transparent
+  );
+  outline-offset: 3px;
+}

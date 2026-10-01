@@ -244,6 +244,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArticlePageResponseDto'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
         '401':
           $ref: '#/components/responses/UnauthorizedProblem'
     post:
@@ -515,6 +517,7 @@ components:
       minProperties: 1
       dependentRequired:
         password: [currentPassword]
+        currentPassword: [password]
       properties:
         username:
           type: string
@@ -603,6 +606,7 @@ components:
           type: string
           minLength: 1
           maxLength: 255
+          pattern: '.*\S.*'
 
     UpdateTopicRequestDto:
       type: object
@@ -613,6 +617,7 @@ components:
           type: string
           minLength: 1
           maxLength: 255
+          pattern: '.*\S.*'
 
     CreateArticleRequestDto:
       type: object

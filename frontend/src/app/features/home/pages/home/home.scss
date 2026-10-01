@@ -1,0 +1,66 @@
+.hero {
+  max-width: 48rem;
+  padding: clamp(2rem, 8vw, 6rem) 0;
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: var(--orion-primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+}
+
+h1 {
+  margin: 0;
+  max-width: 15ch;
+  font-size: clamp(2.25rem, 7vw, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+
+.hero-description {
+  max-width: 60ch;
+  margin: 1.5rem 0 0;
+  color: var(--orion-text-muted);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.principles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.principles article {
+  padding: 1.5rem;
+  background: var(--orion-surface);
+  border: 1px solid var(--orion-border);
+  border-radius: 0.75rem;
+}
+
+.principles h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.principles p {
+  margin-bottom: 0;
+  color: var(--orion-text-muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 48rem) {
+  .principles {
+    grid-template-columns: 1fr;
+  }
+}

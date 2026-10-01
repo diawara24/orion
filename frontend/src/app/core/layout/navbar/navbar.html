@@ -1,0 +1,46 @@
+<mat-toolbar class="navbar">
+  <a
+    class="brand"
+    routerLink="/"
+    aria-label="Retour à l'accueil Orion"
+  >
+    Orion
+  </a>
+
+  <span class="spacer"></span>
+
+  <nav class="desktop-navigation" aria-label="Navigation principale">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Accueil
+    </a>
+
+    <a mat-button routerLink="/login" routerLinkActive="active-link">
+      Se connecter
+    </a>
+
+    <a mat-raised-button routerLink="/register">
+      Créer un compte
+    </a>
+  </nav>
+
+  <div class="mobile-navigation">
+    <button
+      mat-stroked-button
+      [matMenuTriggerFor]="menu"
+      aria-label="Ouvrir le menu de navigation"
+    >
+      Menu
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <a mat-menu-item routerLink="/">Accueil</a>
+      <a mat-menu-item routerLink="/login">Se connecter</a>
+      <a mat-menu-item routerLink="/register">Créer un compte</a>
+    </mat-menu>
+  </div>
+</mat-toolbar>

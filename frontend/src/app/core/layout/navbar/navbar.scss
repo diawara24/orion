@@ -1,0 +1,56 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  min-height: 4.5rem;
+  padding-inline: max(1rem, calc((100% - 72rem) / 2));
+  color: var(--orion-text);
+  background: color-mix(
+    in srgb,
+    var(--orion-surface) 94%,
+    transparent
+  );
+  border-bottom: 1px solid var(--orion-border);
+  backdrop-filter: blur(0.75rem);
+}
+
+.brand {
+  color: var(--orion-primary);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.desktop-navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobile-navigation {
+  display: none;
+}
+
+.active-link {
+  color: var(--orion-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 48rem) {
+  .navbar {
+    min-height: 4rem;
+  }
+
+  .desktop-navigation {
+    display: none;
+  }
+
+  .mobile-navigation {
+    display: block;
+  }
+}

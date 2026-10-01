@@ -1,0 +1,11 @@
+export * from './articles.service';
+import { ArticlesService } from './articles.service';
+export * from './authentication.service';
+import { AuthenticationService } from './authentication.service';
+export * from './comments.service';
+import { CommentsService } from './comments.service';
+export * from './topics.service';
+import { TopicsService } from './topics.service';
+export * from './users.service';
+import { UsersService } from './users.service';
+export const APIS = [ArticlesService, AuthenticationService, CommentsService, TopicsService, UsersService];
