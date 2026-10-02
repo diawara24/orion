@@ -1,1 +1,117 @@
-<p>register works!</p>
+<main class="auth-page" aria-labelledby="register-title">
+  <section class="auth-card">
+    <header class="auth-card__header">
+      <p class="auth-card__eyebrow">Bienvenue sur Orion</p>
+      <h1 id="register-title">Créer un compte</h1>
+      <p>Rejoignez Orion pour suivre les thèmes qui vous intéressent.</p>
+    </header>
+
+    <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+      <div
+        class="form-field"
+        [class.form-field--invalid]="f.username.invalid && (f.username.dirty || f.username.touched)"
+      >
+        <label for="username">Nom d’utilisateur</label>
+        <input
+          id="username"
+          name="username"
+          formControlName="username"
+          type="text"
+          autocomplete="username"
+          minlength="1"
+          maxlength="50"
+          required
+          [attr.aria-invalid]="f.username.invalid && (f.username.dirty || f.username.touched)"
+          aria-describedby="username-hint username-error"
+        />
+        <p id="username-hint" class="form-field__hint">Entre 1 et 50 caractères.</p>
+        @if (f.username.invalid && (f.username.dirty || f.username.touched)) {
+          <p id="username-error" class="form-field__error">
+            @if (f.username.hasError('required')) {
+              Le nom d’utilisateur est requis.
+            } @else if (f.username.hasError('minlength')) {
+              Le nom d’utilisateur doit contenir au moins un caractère.
+            } @else if (f.username.hasError('maxlength')) {
+              Le nom d’utilisateur ne peut pas dépasser 50 caractères.
+            } @else if (f.username.hasError('server')) {
+              {{ f.username.getError('server') }}
+            }
+          </p>
+        }
+      </div>
+
+      <div
+        class="form-field"
+        [class.form-field--invalid]="f.email.invalid && (f.email.dirty || f.email.touched)"
+      >
+        <label for="email">Adresse e-mail</label>
+        <input
+          id="email"
+          name="email"
+          formControlName="email"
+          type="email"
+          autocomplete="email"
+          maxlength="255"
+          required
+          [attr.aria-invalid]="f.email.invalid && (f.email.dirty || f.email.touched)"
+          aria-describedby="email-error"
+        />
+        @if (f.email.invalid && (f.email.dirty || f.email.touched)) {
+          <p id="email-error" class="form-field__error">
+            @if (f.email.hasError('required')) {
+              L’adresse e-mail est requise.
+            } @else if (f.email.hasError('email')) {
+              Saisissez une adresse e-mail valide.
+            } @else if (f.email.hasError('maxlength')) {
+              L’adresse e-mail ne peut pas dépasser 255 caractères.
+            } @else if (f.email.hasError('server')) {
+              {{ f.email.getError('server') }}
+            }
+          </p>
+        }
+      </div>
+
+      <div
+        class="form-field"
+        [class.form-field--invalid]="f.password.invalid && (f.password.dirty || f.password.touched)"
+      >
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          name="password"
+          formControlName="password"
+          type="password"
+          autocomplete="new-password"
+          minlength="8"
+          required
+          [attr.aria-invalid]="f.password.invalid && (f.password.dirty || f.password.touched)"
+          aria-describedby="password-hint password-error"
+        />
+        <p id="password-hint" class="form-field__hint">
+          Au moins 8 caractères, avec une majuscule, une minuscule, un chiffre et un caractère spécial.
+        </p>
+        @if (f.password.invalid && (f.password.dirty || f.password.touched)) {
+          <p id="password-error" class="form-field__error">
+            @if (f.password.hasError('required')) {
+              Le mot de passe est requis.
+            } @else if (f.password.hasError('minlength')) {
+              Le mot de passe doit contenir au moins 8 caractères.
+            } @else if (f.password.hasError('pattern')) {
+              Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial.
+            } @else if (f.password.hasError('server')) {
+              {{ f.password.getError('server') }}
+            }
+          </p>
+        }
+      </div>
+
+      <button type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Création du compte…' : 'Créer mon compte' }}
+      </button>
+    </form>
+
+    <footer class="auth-card__footer">
+      <p>Vous avez déjà un compte ? <a routerLink="/login">Se connecter</a></p>
+    </footer>
+  </section>
+</main>
