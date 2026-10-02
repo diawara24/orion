@@ -3,6 +3,7 @@ import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from 
 
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideApi } from './core/api';
 import { environment } from '../environments/environment';
 
@@ -27,6 +28,9 @@ export const appConfig: ApplicationConfig = {
 
     // Gerer les requetes HTTP
     provideHttpClient(),
+
+    // Active les animations nécessaires aux composants Angular Material.
+    provideAnimationsAsync(),
 
     // Gerer l'API de l'application
     provideApi(environment.apiBaseUrl),
