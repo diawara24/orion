@@ -1,67 +1,56 @@
-<main class="auth-page" aria-labelledby="login-title">
-  <section class="auth-card">
-    <header class="auth-card__header">
-      <p class="auth-card__eyebrow">Bienvenue sur Orion</p>
-      <h1 id="login-title">Se connecter</h1>
-      <p>Retrouvez votre fil d’actualité et les thèmes que vous suivez.</p>
-    </header>
+<section class="auth-form-page" aria-labelledby="login-title">
+  <h1 id="login-title">Se connecter</h1>
 
-    <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
-      <div class="form-field">
-        <label for="username">Nom d’utilisateur ou adresse e-mail</label>
-        <input
-          id="username"
-          name="username"
-          formControlName="username"
-          type="text"
-          autocomplete="username"
-          placeholder="Nom d’utilisateur ou adresse e-mail"
-          [attr.aria-invalid]="f.username.invalid && (f.username.dirty || f.username.touched)"
-          aria-describedby="username-hint username-error"
-          required
-        />
-        @if (f.username.invalid && (f.username.dirty || f.username.touched)) {
-          <p id="username-error" class="form-field__error">
-            @if (f.username.hasError('required')) {
-              Le nom d’utilisateur est requis.
-            } @else if (f.username.hasError('server')) {
-              {{ f.username.getError('server') }}
-            }
-          </p>
-        }
-      </div>
+  <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-field">
+      <label for="username">E-mail ou nom d’utilisateur</label>
+      <input
+        id="username"
+        name="username"
+        formControlName="username"
+        type="text"
+        autocomplete="username"
+        [attr.aria-invalid]="f.username.invalid && (f.username.dirty || f.username.touched)"
+        aria-describedby="username-error"
+        required
+      />
+      @if (f.username.invalid && (f.username.dirty || f.username.touched)) {
+        <p id="username-error" class="form-field__error">
+          @if (f.username.hasError('required')) {
+            Le nom d’utilisateur est requis.
+          } @else if (f.username.hasError('server')) {
+            {{ f.username.getError('server') }}
+          }
+        </p>
+      }
+    </div>
 
-      <div class="form-field">
-        <label for="password">Mot de passe</label>
-        <input
-          id="password"
-          name="password"
-          formControlName="password"
-          type="password"
-          autocomplete="current-password"
-          minlength="1"
-          [attr.aria-invalid]="f.password.invalid && (f.password.dirty || f.password.touched)"
-          aria-describedby="password-hint password-error"
-          required
-        />
-        @if (f.password.invalid && (f.password.dirty || f.password.touched)) {
-          <p id="password-error" class="form-field__error">
-            @if (f.password.hasError('required')) {
-              Le mot de passe est requis.
-            } @else if (f.password.hasError('server')) {
-              {{ f.password.getError('server') }}
-            }
-          </p>
-        }
-      </div>
+    <div class="form-field">
+      <label for="password">Mot de passe</label>
+      <input
+        id="password"
+        name="password"
+        formControlName="password"
+        type="password"
+        autocomplete="current-password"
+        minlength="1"
+        [attr.aria-invalid]="f.password.invalid && (f.password.dirty || f.password.touched)"
+        aria-describedby="password-error"
+        required
+      />
+      @if (f.password.invalid && (f.password.dirty || f.password.touched)) {
+        <p id="password-error" class="form-field__error">
+          @if (f.password.hasError('required')) {
+            Le mot de passe est requis.
+          } @else if (f.password.hasError('server')) {
+            {{ f.password.getError('server') }}
+          }
+        </p>
+      }
+    </div>
 
-      <button type="submit" [disabled]="isSubmitting()">
-        {{ isSubmitting() ? 'Connexion en cours...' : 'Se connecter' }}
-      </button>
-    </form>
-
-    <footer class="auth-card__footer">
-      <p>Vous n’avez pas encore de compte ? <a href="/register">Créer un compte</a></p>
-    </footer>
-  </section>
-</main>
+    <button type="submit" [disabled]="isSubmitting()">
+      {{ isSubmitting() ? 'Connexion en cours...' : 'Se connecter' }}
+    </button>
+  </form>
+</section>

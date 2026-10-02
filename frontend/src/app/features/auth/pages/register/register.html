@@ -1,12 +1,7 @@
-<main class="auth-page" aria-labelledby="register-title">
-  <section class="auth-card">
-    <header class="auth-card__header">
-      <p class="auth-card__eyebrow">Bienvenue sur Orion</p>
-      <h1 id="register-title">Créer un compte</h1>
-      <p>Rejoignez Orion pour suivre les thèmes qui vous intéressent.</p>
-    </header>
+<section class="auth-form-page" aria-labelledby="register-title">
+  <h1 id="register-title">Inscription</h1>
 
-    <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+  <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
       <div
         class="form-field"
         [class.form-field--invalid]="f.username.invalid && (f.username.dirty || f.username.touched)"
@@ -22,9 +17,8 @@
           maxlength="50"
           required
           [attr.aria-invalid]="f.username.invalid && (f.username.dirty || f.username.touched)"
-          aria-describedby="username-hint username-error"
+          aria-describedby="username-error"
         />
-        <p id="username-hint" class="form-field__hint">Entre 1 et 50 caractères.</p>
         @if (f.username.invalid && (f.username.dirty || f.username.touched)) {
           <p id="username-error" class="form-field__error">
             @if (f.username.hasError('required')) {
@@ -85,11 +79,8 @@
           minlength="8"
           required
           [attr.aria-invalid]="f.password.invalid && (f.password.dirty || f.password.touched)"
-          aria-describedby="password-hint password-error"
+          aria-describedby="password-error"
         />
-        <p id="password-hint" class="form-field__hint">
-          Au moins 8 caractères, avec une majuscule, une minuscule, un chiffre et un caractère spécial.
-        </p>
         @if (f.password.invalid && (f.password.dirty || f.password.touched)) {
           <p id="password-error" class="form-field__error">
             @if (f.password.hasError('required')) {
@@ -106,12 +97,7 @@
       </div>
 
       <button type="submit" [disabled]="isSubmitting()">
-        {{ isSubmitting() ? 'Création du compte…' : 'Créer mon compte' }}
+        {{ isSubmitting() ? 'Création du compte…' : 'S’inscrire' }}
       </button>
-    </form>
-
-    <footer class="auth-card__footer">
-      <p>Vous avez déjà un compte ? <a routerLink="/login">Se connecter</a></p>
-    </footer>
-  </section>
-</main>
+  </form>
+</section>

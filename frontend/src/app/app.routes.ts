@@ -9,14 +9,21 @@ export const routes: Routes = [
     title: 'Home',
   },
   {
-    path: 'login',
-    loadComponent: () => import('./features/auth/pages/login/login').then((m) => m.Login),
-    title: 'Connexion | Orion',
-  },
-  {
-    path: 'register',
-    loadComponent: () => import('./features/auth/pages/register/register').then((m) => m.Register),
-    title: 'Inscription | Orion',
+    path: '',
+    loadComponent: () =>
+      import('./features/auth/layout/auth-layout/auth-layout').then((m) => m.AuthLayout),
+    children: [
+      {
+        path: 'login',
+        loadComponent: () => import('./features/auth/pages/login/login').then((m) => m.Login),
+        title: 'Connexion | Orion',
+      },
+      {
+        path: 'register',
+        loadComponent: () => import('./features/auth/pages/register/register').then((m) => m.Register),
+        title: 'Inscription | Orion',
+      },
+    ],
   },
   {
     path: '',
