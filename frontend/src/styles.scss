@@ -2,7 +2,7 @@
 @use './styles/notifications';
 
 :root {
-  --orion-primary: #2457a6;
+  --orion-primary: #7763C5;
   --orion-primary-hover: #193f7c;
   --orion-text: #182230;
   --orion-text-muted: #5d6b7a;
@@ -30,7 +30,7 @@ body {
   margin: 0;
   color: var(--orion-text);
   background: var(--orion-background);
-  font-family: Roboto, Arial, sans-serif;
+  font-family: Inter, Arial, sans-serif;
 }
 
 button,

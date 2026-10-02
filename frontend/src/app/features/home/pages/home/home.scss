@@ -1,66 +1,74 @@
-.hero {
-  max-width: 48rem;
-  padding: clamp(2rem, 8vw, 6rem) 0;
+:host {
+  display: block;
+  min-height: 100dvh;
+  border: 1px solid #000;
 }
 
-.eyebrow {
-  margin: 0 0 1rem;
-  color: var(--orion-primary);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.75rem;
-}
-
-h1 {
-  margin: 0;
-  max-width: 15ch;
-  font-size: clamp(2.25rem, 7vw, 4.5rem);
-  line-height: 1.05;
-  letter-spacing: -0.045em;
-}
-
-.hero-description {
-  max-width: 60ch;
-  margin: 1.5rem 0 0;
-  color: var(--orion-text-muted);
-  font-size: 1.125rem;
-  line-height: 1.6;
-}
-
-.hero-actions {
+.home-page {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 52.1875rem);
+  min-height: calc(100dvh - 2px);
+  margin-inline: auto;
+  padding: clamp(2rem, 6vw, 4rem);
 }
 
-.principles {
+.home-logo {
+  width: min(70vw, 25.75rem);
+  height: auto;
+  object-fit: contain;
+}
+
+.home-actions {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(2, 9.8125rem);
+  gap: 4rem;
+  width: 23.5625rem;
+  margin-top: 2.75rem;
 }
 
-.principles article {
-  padding: 1.5rem;
-  background: var(--orion-surface);
-  border: 1px solid var(--orion-border);
-  border-radius: 0.75rem;
+.home-action {
+  display: grid;
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
+  place-items: center;
+  color: var(--orion-text);
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
-.principles h2 {
-  margin-top: 0;
-  font-size: 1.1rem;
+.home-action:hover {
+  color: #fff;
+  background: var(--orion-primary);
+  border-color: var(--orion-primary);
 }
 
-.principles p {
-  margin-bottom: 0;
-  color: var(--orion-text-muted);
-  line-height: 1.5;
-}
-
+/* Responsive pour les appareils mobiles */
 @media (max-width: 48rem) {
-  .principles {
-    grid-template-columns: 1fr;
+  .home-page {
+    justify-content: flex-start;
+    padding-top: clamp(4rem, 14vh, 7rem);
+  }
+
+  .home-actions {
+    grid-template-columns: 9.8125rem;
+    gap: 2.5rem;
+    width: 9.8125rem;
+  }
+}
+
+/** Responsive pour les très petits appareils mobiles */
+
+@media (max-width: 24rem) {
+  .home-page {
+    padding-inline: 1rem;
+  }
+
+  .home-logo {
+    width: min(70vw, 12.875rem);
   }
 }
