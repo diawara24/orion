@@ -3,6 +3,8 @@ import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from 
 
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
+import { provideApi } from './core/api';
+import { environment } from '../environments/environment.development';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -11,9 +13,6 @@ export const appConfig: ApplicationConfig = {
 
     // Gerer les changement de zone (ie: changement de contexte d'execution)
     provideZoneChangeDetection(),
-
-    // Gerer les erreurs globales du navigateur
-    provideBrowserGlobalErrorListeners(),
 
     // Gerer les routes de l'application avec la possibilite de lier les inputs des composants aux routes
     provideRouter(
@@ -28,6 +27,9 @@ export const appConfig: ApplicationConfig = {
 
     // Gerer les requetes HTTP
     provideHttpClient(),
+
+    // Gerer l'API de l'application
+    provideApi(environment.apiBaseUrl),
 
 
   ]
