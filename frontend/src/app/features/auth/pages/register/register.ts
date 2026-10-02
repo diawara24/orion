@@ -14,7 +14,6 @@ import { NotificationService } from '@core/notification/notification.service';
 @Component({
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   selector: 'app-register',
-  styleUrl: './register.scss',
   templateUrl: './register.html',
 })
 export class Register {

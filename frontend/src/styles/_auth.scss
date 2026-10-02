@@ -1,7 +1,3 @@
-:host {
-  display: block;
-}
-
 .auth-page {
   display: grid;
   min-height: 100%;
@@ -31,7 +27,7 @@
   text-transform: uppercase;
 }
 
-h1 {
+.auth-card h1 {
   margin: 0;
   font-size: clamp(1.75rem, 5vw, 2.25rem);
   line-height: 1.2;
@@ -48,16 +44,16 @@ h1 {
   gap: 1.25rem;
 }
 
-.form-field {
+.auth-page .form-field {
   display: grid;
   gap: 0.5rem;
 }
 
-label {
+.auth-page label {
   font-weight: 600;
 }
 
-input {
+.auth-page input {
   width: 100%;
   min-height: 2.75rem;
   padding: 0.625rem 0.75rem;
@@ -67,12 +63,12 @@ input {
   border-radius: 0.5rem;
 }
 
-input:hover {
+.auth-page input:hover,
+.auth-page input:focus {
   border-color: var(--orion-primary);
 }
 
-input:focus {
-  border-color: var(--orion-primary);
+.auth-page input:focus {
   outline: none;
 }
 
@@ -83,10 +79,7 @@ input:focus {
   line-height: 1.4;
 }
 
-.form-field--invalid input {
-  border-color: var(--orion-danger);
-}
-
+.form-field--invalid input,
 .form-field--invalid input:focus {
   border-color: var(--orion-danger);
 }
@@ -99,7 +92,7 @@ input:focus {
   line-height: 1.4;
 }
 
-button {
+.auth-page button {
   width: 100%;
   min-height: 2.875rem;
   padding: 0.625rem 1rem;
@@ -111,11 +104,11 @@ button {
   font-weight: 700;
 }
 
-button:hover {
+.auth-page button:hover {
   background: var(--orion-primary-hover);
 }
 
-button:disabled {
+.auth-page button:disabled {
   cursor: wait;
   opacity: 0.7;
 }
@@ -135,6 +128,8 @@ button:disabled {
   font-weight: 700;
 }
 
+
+/* Responsive sur mobile 37.5rem equivalent à 600px */
 @media (max-width: 37.5rem) {
   .auth-page {
     padding: 1.5rem 1rem;

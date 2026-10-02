@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '@core/auth/auth-guard';
 
 export const routes: Routes = [
   {
@@ -9,6 +10,12 @@ export const routes: Routes = [
         path: '',
         loadComponent: () => import('./features/home/pages/home/home').then((m) => m.Home),
         title: 'Home',
+      },
+      {
+        path: 'feed',
+        loadComponent: () => import('./features/feed/pages/feed/feed').then((m) => m.Feed),
+        title: 'Fil d\'actualité | Orion',
+        canActivate: [authGuard]
       },
       {
         path: 'login',

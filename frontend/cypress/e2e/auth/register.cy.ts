@@ -33,7 +33,7 @@ describe('Registration', () => {
   });
 
   it('displays a backend validation message below the invalid field', () => {
-    cy.intercept('POST', '/api/v1/auth/register', {
+    cy.intercept('POST', '**/api/v1/auth/register', {
       statusCode: 400,
       body: {
         type: 'about:blank',

@@ -1,7 +1,7 @@
 <mat-toolbar class="navbar">
   <a
     class="brand"
-    routerLink="/"
+    [routerLink]="isAuthenticated() ? '/feed' : '/'"
     aria-label="Retour à l'accueil Orion"
   >
     Orion
@@ -10,22 +10,36 @@
   <span class="spacer"></span>
 
   <nav class="desktop-navigation" aria-label="Navigation principale">
-    <a
-      mat-button
-      routerLink="/"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      Accueil
-    </a>
+    @if (currentUser(); as user) {
+      <a mat-button routerLink="/feed" routerLinkActive="active-link">
+        Actualités
+      </a>
 
-    <a mat-button routerLink="/login" routerLinkActive="active-link">
-      Se connecter
-    </a>
+      <button mat-button [matMenuTriggerFor]="accountMenu" aria-label="Ouvrir le menu du compte">
+        {{ user.username }}
+      </button>
 
-    <a mat-raised-button routerLink="/register">
-      Créer un compte
-    </a>
+      <mat-menu #accountMenu="matMenu">
+        <button mat-menu-item (click)="logout()">Se déconnecter</button>
+      </mat-menu>
+    } @else {
+      <a
+        mat-button
+        routerLink="/"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Accueil
+      </a>
+
+      <a mat-button routerLink="/login" routerLinkActive="active-link">
+        Se connecter
+      </a>
+
+      <a mat-raised-button routerLink="/register">
+        Créer un compte
+      </a>
+    }
   </nav>
 
   <div class="mobile-navigation">
@@ -39,8 +53,13 @@
 
     <mat-menu #menu="matMenu">
       <a mat-menu-item routerLink="/">Accueil</a>
-      <a mat-menu-item routerLink="/login">Se connecter</a>
-      <a mat-menu-item routerLink="/register">Créer un compte</a>
+      @if (currentUser()) {
+        <a mat-menu-item routerLink="/feed">Actualités</a>
+        <button mat-menu-item (click)="logout()">Se déconnecter</button>
+      } @else {
+        <a mat-menu-item routerLink="/login">Se connecter</a>
+        <a mat-menu-item routerLink="/register">Créer un compte</a>
+      }
     </mat-menu>
   </div>
 </mat-toolbar>

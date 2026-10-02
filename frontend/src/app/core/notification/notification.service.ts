@@ -17,7 +17,7 @@ export class NotificationService {
       horizontalPosition: 'right',
       verticalPosition: 'top',
       politeness: 'assertive',
-      panelClass: ['error-snackbar'], // Applique une classe CSS personnalisée pour le style de l'erreur
+      panelClass: ['orion-snackbar--error'],
     });
   }
 
@@ -31,6 +31,7 @@ export class NotificationService {
       horizontalPosition: 'right',
       verticalPosition: 'top',
       politeness: 'polite',
+      panelClass: ['orion-snackbar--success'],
     });
   }
 }

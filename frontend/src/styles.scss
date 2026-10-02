@@ -1,3 +1,6 @@
+@use './styles/auth';
+@use './styles/notifications';
+
 :root {
   --orion-primary: #2457a6;
   --orion-primary-hover: #193f7c;
@@ -7,6 +10,7 @@
   --orion-surface: #ffffff;
   --orion-border: #dbe3ee;
   --orion-danger: #b42318;
+  --orion-success: #157347;
 }
 
 *,

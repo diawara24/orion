@@ -1,0 +1,11 @@
+.orion-snackbar--error {
+  --mat-snack-bar-container-color: var(--orion-danger);
+  --mat-snack-bar-supporting-text-color: #fff;
+  --mat-snack-bar-button-color: #fff;
+}
+
+.orion-snackbar--success {
+  --mat-snack-bar-container-color: var(--orion-success);
+  --mat-snack-bar-supporting-text-color: #fff;
+  --mat-snack-bar-button-color: #fff;
+}

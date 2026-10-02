@@ -18,7 +18,7 @@
       "@features/*": ["./src/app/features/*"],
       "@shared/*": ["./src/app/shared/*"],
       "@env/*": ["./src/environments/*"]
-    },
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
