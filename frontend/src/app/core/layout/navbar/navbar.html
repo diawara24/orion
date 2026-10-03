@@ -1,65 +1,44 @@
-<mat-toolbar class="navbar">
-  <a
-    class="brand"
-    [routerLink]="isAuthenticated() ? '/feed' : '/'"
-    aria-label="Retour à l'accueil Orion"
-  >
-    Orion
+<header class="navbar">
+  <a class="navbar__brand" [routerLink]="isAuthenticated() ? '/feed' : '/'" aria-label="Orion">
+    <img src="/logo.png" alt="Orion" />
   </a>
 
-  <span class="spacer"></span>
-
-  <nav class="desktop-navigation" aria-label="Navigation principale">
-    @if (currentUser(); as user) {
-      <a mat-button routerLink="/feed" routerLinkActive="active-link">
-        Actualités
-      </a>
-
-      <button mat-button [matMenuTriggerFor]="accountMenu" aria-label="Ouvrir le menu du compte">
-        {{ user.username }}
-      </button>
-
-      <mat-menu #accountMenu="matMenu">
-        <button mat-menu-item (click)="logout()">Se déconnecter</button>
-      </mat-menu>
+  <nav class="navbar__desktop-navigation" aria-label="Navigation principale">
+    @if (currentUser()) {
+    <button type="button" class="navbar__logout" (click)="logout()">Se déconnecter</button>
+    <a routerLink="/feed" routerLinkActive="navbar__link--active">Articles</a>
+    <span class="navbar__static-link">Thèmes</span>
+    <button type="button" class="navbar__profile" aria-label="Consulter mon profil">
+      <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+    </button>
     } @else {
-      <a
-        mat-button
-        routerLink="/"
-        routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-        Accueil
-      </a>
-
-      <a mat-button routerLink="/login" routerLinkActive="active-link">
-        Se connecter
-      </a>
-
-      <a mat-raised-button routerLink="/register">
-        Créer un compte
-      </a>
+    <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="navbar__link--active">Accueil</a>
+    <a routerLink="/login" routerLinkActive="navbar__link--active">Se connecter</a>
+    <a class="navbar__register-link" routerLink="/register">S’inscrire</a>
     }
   </nav>
 
-  <div class="mobile-navigation">
-    <button
-      mat-stroked-button
-      [matMenuTriggerFor]="menu"
-      aria-label="Ouvrir le menu de navigation"
-    >
-      Menu
-    </button>
+  <details class="navbar__mobile-menu">
+    <summary aria-label="Ouvrir le menu de navigation">
+      <span class="material-symbols-outlined navbar__menu-icon" aria-hidden="true">menu</span>
+      <span class="material-symbols-outlined navbar__close-icon" aria-hidden="true">close</span>
+    </summary>
 
-    <mat-menu #menu="matMenu">
-      <a mat-menu-item routerLink="/">Accueil</a>
-      @if (currentUser()) {
-        <a mat-menu-item routerLink="/feed">Actualités</a>
-        <button mat-menu-item (click)="logout()">Se déconnecter</button>
-      } @else {
-        <a mat-menu-item routerLink="/login">Se connecter</a>
-        <a mat-menu-item routerLink="/register">Créer un compte</a>
-      }
-    </mat-menu>
-  </div>
-</mat-toolbar>
+    <div class="navbar__mobile-panel">
+      <nav aria-label="Navigation mobile">
+        @if (currentUser()) {
+        <button type="button" class="navbar__logout" (click)="logout()">Se déconnecter</button>
+        <a routerLink="/feed">Articles</a>
+        <span class="navbar__static-link">Thèmes</span>
+        <button type="button" class="navbar__profile" aria-label="Consulter mon profil">
+          <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
+        </button>
+        } @else {
+        <a routerLink="/">Accueil</a>
+        <a routerLink="/login">Se connecter</a>
+        <a routerLink="/register">S’inscrire</a>
+        }
+      </nav>
+    </div>
+  </details>
+</header>

@@ -1,1 +1,35 @@
-<p>feed works!</p>
+<section class="feed" aria-labelledby="feed-title">
+  <h1 id="feed-title" class="visually-hidden">Fil d’actualité</h1>
+
+  <div class="feed__actions">
+    <button type="button" class="feed__create-button" routerLink="/articles/create">
+      Créer un article
+    </button>
+
+    <button
+      type="button"
+      class="feed__sort-button"
+      (click)="toggleSort()"
+      [attr.aria-label]="sort() === 'oldest' ? 'Tri croissant : du plus ancien au plus récent' : 'Tri décroissant : du plus récent au plus ancien'"
+    >
+      Trier par
+      <span class="material-symbols-outlined" aria-hidden="true">{{ sortIcon() }}</span>
+    </button>
+  </div>
+
+  <div class="feed__articles">
+    @for (article of articles(); track article.id) {
+      <app-article-card [article]="article" />
+    }
+  </div>
+
+  <div #loadMoreTrigger class="feed__load-more-trigger" aria-hidden="true">
+    @if (isLoadingMore() && articles().length > 0) {
+      Chargement des articles…
+    }
+  </div>
+
+  @if (!isLoadingMore() && articles().length === 0) {
+    <p class="feed__no-articles">Aucun article à afficher.</p>
+  }
+</section>

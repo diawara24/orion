@@ -1,0 +1,16 @@
+<article class="article-card">
+  <a
+    class="article-card__link"
+    [routerLink]="['/articles', article().id]"
+    [attr.aria-label]="'Lire l’article : ' + article().title"
+  >
+    <h2>{{ article().title }}</h2>
+
+    <div class="article-card__metadata">
+      <time [attr.datetime]="article().createdAt">{{ article().createdAt | date: 'dd/MM/yyyy' }}</time>
+      <span>@{{ article().author.username }}</span>
+    </div>
+
+    <p>{{ article().excerpt }}</p>
+  </a>
+</article>

@@ -1,7 +1,7 @@
 :host {
   min-height: 100dvh; 
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
 }
 
 .app-main {
@@ -10,25 +10,9 @@
   padding: 2rem 0 3rem;
 }
 
-.app-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.25rem max(1rem, calc((100% - 72rem) / 2));
-  color: var(--orion-text-muted);
-  background: var(--orion-surface);
-  border-top: 1px solid var(--orion-border);
-  font-size: 0.875rem;
-}
-
 @media (max-width: 48rem) {
   .app-main {
     width: min(100% - 1.5rem, 72rem);
     padding: 1.5rem 0 2rem;
-  }
-
-  .app-footer {
-    flex-direction: column;
-    align-items: flex-start;
   }
 }

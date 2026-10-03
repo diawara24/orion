@@ -41,11 +41,11 @@ describe('Navbar', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('Se connecter');
-    expect(fixture.nativeElement.textContent).toContain('Créer un compte');
-    expect(fixture.nativeElement.textContent).not.toContain('Actualités');
+    expect(fixture.nativeElement.textContent).toContain('S’inscrire');
+    expect(fixture.nativeElement.textContent).not.toContain('Articles');
   });
 
-  it('displays the feed link and username for an authenticated user', () => {
+  it('displays the authenticated navigation for an authenticated user', () => {
     currentUser.next({
       id: '90e9d2cd-f3e3-4a95-8c5a-8794e7dff2e9',
       username: 'orlando',
@@ -55,8 +55,9 @@ describe('Navbar', () => {
     });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('Actualités');
-    expect(fixture.nativeElement.textContent).toContain('orlando');
-    expect(fixture.nativeElement.textContent).not.toContain('Créer un compte');
+    expect(fixture.nativeElement.textContent).toContain('Articles');
+    expect(fixture.nativeElement.textContent).toContain('Thèmes');
+    expect(fixture.nativeElement.querySelector('[aria-label="Consulter mon profil"]')).toBeTruthy();
+    expect(fixture.nativeElement.textContent).not.toContain('S’inscrire');
   });
 });

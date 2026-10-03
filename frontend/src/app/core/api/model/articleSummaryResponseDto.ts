@@ -15,6 +15,7 @@ export interface ArticleSummaryResponseDto {
     id: string;
     title: string;
     slug: string;
+    excerpt?: string;
     author: AuthorResponseDto;
     topic: TopicResponseDto;
     createdAt: string;

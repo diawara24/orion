@@ -41,7 +41,7 @@ describe('authInterceptor', () => {
 
   it('does not attach a stale token to the public login request', () => {
     authService.getToken.mockReturnValue('stale-token');
-    const request = new HttpRequest('POST', '/api/v1/auth/login');
+    const request = new HttpRequest('POST', '/api/v1/auth/login', null);
 
     interceptor(request, next as HttpHandlerFn).subscribe();
 
