@@ -9,6 +9,7 @@ import com.example.backend.topic.Topic;
 import com.example.backend.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(
@@ -21,13 +22,26 @@ public interface ArticleMapper {
     @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "instantToOffsetDateTime")
     @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "instantToOffsetDateTime")
     @Mapping(target = "commentCount", ignore = true)
+    @Mapping(target = "excerpt", ignore = true)
     ArticleDetailResponseDto toDetailResponseDto(Article article);
 
     @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "instantToOffsetDateTime")
+    @Mapping(target = "excerpt", source = "content", qualifiedByName = "toExcerpt")
     ArticleSummaryResponseDto toSummaryResponseDto(Article article);
 
     AuthorResponseDto toAuthorResponseDto(User user);
 
     @Mapping(target = "subscribed", ignore = true)
     TopicResponseDto toTopicResponseDto(Topic topic);
+
+    @Named("toExcerpt")
+    default String toExcerpt(String content) {
+        final int maxLength = 280;
+        String normalizedContent = content.strip();
+        if (normalizedContent.length() <= maxLength) {
+            return normalizedContent;
+        }
+
+        return  normalizedContent.substring(0, maxLength - 1).stripTrailing() + "…";
+    }
 }
