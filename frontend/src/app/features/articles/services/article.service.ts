@@ -3,7 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { catchApiError } from '@core/http/catch-api-error.operator';
 import { environment } from '@env/environment';
 import type { Observable } from 'rxjs';
-import type { ArticlePageResponse, PageRequestParams } from '../models/article.model';
+import type {
+  ArticleDetail,
+  ArticlePageResponse,
+  CreateArticleRequest,
+  PageRequestParams,
+} from '../models/article.model';
 
 
 
@@ -29,6 +34,12 @@ export class ArticleService {
           size,
         },
       })
+      .pipe(catchApiError());
+  }
+
+  create(request: CreateArticleRequest): Observable<ArticleDetail> {
+    return this.http
+      .post<ArticleDetail>(`${this.apiBaseUrl}/articles`, request)
       .pipe(catchApiError());
   }
 }

@@ -12,6 +12,17 @@ export interface Article {
   commentCount: number;
 }
 
+export interface CreateArticleRequest {
+  title: string;
+  content: string;
+  topicId: string;
+}
+
+export interface ArticleDetail extends Article {
+  content: string;
+  updatedAt: string | Date;
+}
+
 export interface ArticlePageResponse {
   content: Article[];
   page: number;

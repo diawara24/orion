@@ -1,1 +1,79 @@
-<p>article-create works!</p>
+<section class="article-create" aria-labelledby="article-create-title">
+  <app-back-link link="/feed" label="Retour au fil d’actualité" />
+
+  <div class="article-create__content">
+    <h1 id="article-create-title">Créer un article</h1>
+
+    <form class="article-form" [formGroup]="articleForm" (ngSubmit)="onSubmit()" novalidate>
+      <div
+        class="article-form__field"
+        [class.article-form__field--invalid]="f.topicId.invalid && (f.topicId.dirty || f.topicId.touched)"
+      >
+        <label for="topic">Thème</label>
+        <select
+          id="topic"
+          name="topic"
+          formControlName="topicId"
+          required
+          [attr.aria-invalid]="f.topicId.invalid && (f.topicId.dirty || f.topicId.touched)"
+          aria-describedby="topic-error"
+        >
+          <option value="" disabled>Sélectionnez un thème</option>
+          @for (topic of topics(); track topic.id) {
+            <option [value]="topic.id">{{ topic.name }}</option>
+          }
+        </select>
+        @if (isLoadingTopics()) {
+          <p class="article-form__hint">Chargement des thèmes…</p>
+        } @else if (f.topicId.invalid && (f.topicId.dirty || f.topicId.touched)) {
+          <p id="topic-error" class="article-form__error">{{ f.topicId.getError('server') ?? 'Sélectionnez un thème.' }}</p>
+        }
+      </div>
+
+      <div
+        class="article-form__field"
+        [class.article-form__field--invalid]="f.title.invalid && (f.title.dirty || f.title.touched)"
+      >
+        <label for="title">Titre</label>
+        <input
+          id="title"
+          name="title"
+          type="text"
+          formControlName="title"
+          maxlength="255"
+          required
+          [attr.aria-invalid]="f.title.invalid && (f.title.dirty || f.title.touched)"
+          aria-describedby="title-error"
+        />
+        @if (f.title.invalid && (f.title.dirty || f.title.touched)) {
+          <p id="title-error" class="article-form__error">{{ f.title.getError('server') ?? 'Le titre est requis.' }}</p>
+        }
+      </div>
+
+      <div
+        class="article-form__field article-form__field--content"
+        [class.article-form__field--invalid]="f.content.invalid && (f.content.dirty || f.content.touched)"
+      >
+        <label for="content">Contenu</label>
+        <textarea
+          id="content"
+          name="content"
+          formControlName="content"
+          rows="10"
+          required
+          [attr.aria-invalid]="f.content.invalid && (f.content.dirty || f.content.touched)"
+          aria-describedby="content-error"
+        ></textarea>
+        @if (f.content.invalid && (f.content.dirty || f.content.touched)) {
+          <p id="content-error" class="article-form__error">{{ f.content.getError('server') ?? 'Le contenu est requis.' }}</p>
+        }
+      </div>
+
+      <div class="article-form__actions">
+        <button type="submit" [disabled]="isSubmitting() || isLoadingTopics()">
+          {{ isSubmitting() ? 'Publication…' : 'Publier l’article' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>

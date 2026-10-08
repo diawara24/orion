@@ -52,4 +52,20 @@ describe('ArticleService', () => {
       });
     });
 
+  it('creates an article', () => {
+    service = TestBed.inject(ArticleService);
+    const payload = {
+      title: 'Comprendre Spring Boot',
+      content: 'Un contenu pour découvrir Spring Boot.',
+      topicId: '2d695f0e-0510-4f37-8654-f2e04a742b70',
+    };
+
+    service.create(payload).subscribe();
+
+    const request = httpMock.expectOne('/api/v1/articles');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual(payload);
+    request.flush({ id: 'article-1' });
+  });
+
 });
