@@ -42,7 +42,7 @@ export const routes: Routes = [
       },
       {
         path: 'articles/:id',
-        loadComponent: () => import('./features/articles/pages/article-detail/article-detail').then((m) => m.ArticleDetail),
+        loadComponent: () => import('./features/articles/pages/article-detail/article-detail').then((m) => m.ArticleDetailComponent),
         title: "Détail de l'article | Orion"
       },
     ],

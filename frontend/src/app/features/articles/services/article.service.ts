@@ -42,4 +42,10 @@ export class ArticleService {
       .post<ArticleDetail>(`${this.apiBaseUrl}/articles`, request)
       .pipe(catchApiError());
   }
+
+  getById(articleId: string): Observable<ArticleDetail> {
+    return this.http
+      .get<ArticleDetail>(`${this.apiBaseUrl}/articles/${articleId}`)
+      .pipe(catchApiError());
+  }
 }

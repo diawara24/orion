@@ -68,4 +68,14 @@ describe('ArticleService', () => {
     request.flush({ id: 'article-1' });
   });
 
+  it('gets an article by its identifier', () => {
+    service = TestBed.inject(ArticleService);
+
+    service.getById('article-1').subscribe();
+
+    const request = httpMock.expectOne('/api/v1/articles/article-1');
+    expect(request.request.method).toBe('GET');
+    request.flush({ id: 'article-1' });
+  });
+
 });

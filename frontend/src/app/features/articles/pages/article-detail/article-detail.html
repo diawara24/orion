@@ -1,1 +1,79 @@
-<p>article-detail works!</p>
+@if (isLoading()) {
+  <p class="article-detail__state">Chargement de l’article…</p>
+} @else if (errorMessage()) {
+  <section class="article-detail article-detail--error" aria-labelledby="article-error-title">
+    <app-back-link link="/feed" label="Retour au fil d’actualité" />
+    <p id="article-error-title">{{ errorMessage() }}</p>
+  </section>
+} @else if (article(); as article) {
+  <article class="article-detail">
+    <header class="article-detail__header">
+      <app-back-link link="/feed" label="Retour au fil d’actualité" />
+      <h1>{{ article.title }}</h1>
+    </header>
+
+    <dl class="article-detail__metadata">
+      <div>
+        <dt>Date</dt>
+        <dd><time [attr.datetime]="article.createdAt">{{ article.createdAt | date: 'dd/MM/yyyy' }}</time></dd>
+      </div>
+      <div>
+        <dt>Auteur</dt>
+        <dd>@{{ article.author.username }}</dd>
+      </div>
+      <div>
+        <dt>Thème</dt>
+        <dd>{{ article.topic.name }}</dd>
+      </div>
+    </dl>
+
+    <section class="article-detail__content" aria-label="Contenu de l’article">
+      {{ article.content }}
+    </section>
+
+    <section class="comments" aria-labelledby="comments-title">
+      <h2 id="comments-title">Commentaires <span>({{ article.commentCount }})</span></h2>
+
+      @if (isLoadingComments()) {
+        <p class="comments__state">Chargement des commentaires…</p>
+      } @else if (comments().length === 0) {
+        <p class="comments__state">Aucun commentaire pour le moment.</p>
+      } @else {
+        <ul class="comments__list">
+          @for (comment of comments(); track comment.id) {
+            <li class="comment">
+              <span class="comment__avatar" aria-hidden="true">{{ commentInitial(comment.author.username) }}</span>
+              <div class="comment__body">
+                <strong>{{ comment.author.username }}</strong>
+                <p>{{ comment.content }}</p>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+
+      <form class="comment-form" [formGroup]="commentForm" (ngSubmit)="publishComment()" novalidate>
+        <label class="visually-hidden" for="comment-content">Votre commentaire</label>
+        <textarea
+          id="comment-content"
+          formControlName="content"
+          rows="3"
+          placeholder="Écrivez ici votre commentaire"
+          [attr.aria-invalid]="commentForm.controls.content.invalid && commentForm.controls.content.touched"
+          aria-describedby="comment-content-error"
+        ></textarea>
+        <button type="submit" [disabled]="isPublishingComment()" aria-label="Publier le commentaire">
+          <svg class="comment-form__send-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m22 2-7 20-4-9-9-4Z" />
+            <path d="M22 2 11 13" />
+          </svg>
+        </button>
+        @if (commentForm.controls.content.invalid && commentForm.controls.content.touched) {
+          <p id="comment-content-error" class="comment-form__error">
+            {{ commentForm.controls.content.getError('server') ?? 'Le commentaire est requis.' }}
+          </p>
+        }
+      </form>
+    </section>
+  </article>
+}
