@@ -1,5 +1,5 @@
 import type { User } from '@core/model/auth.model';
-import type { Topic } from '@features/topic/models/topic.model';
+import type { Topic } from '@features/topics/models/topic.model';
 
 export interface Article {
   id: string;

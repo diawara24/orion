@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,7 +8,7 @@ import { ArticleService } from '@features/articles/services/article.service';
 import type { ApiError } from '@core/http/api-error.model';
 import { FormApiErrorService } from '@core/http/form-api-error.service';
 import { NotificationService } from '@core/notification/notification.service';
-import { TopicService, type TopicOption } from '@features/topic/services/topic.service';
+import { TopicService } from '@features/topics/services/topic.service';
 
 @Component({
   imports: [BackLink, ReactiveFormsModule],
@@ -16,7 +16,7 @@ import { TopicService, type TopicOption } from '@features/topic/services/topic.s
   styleUrl: './article-create.scss',
   templateUrl: './article-create.html',
 })
-export class ArticleCreate implements OnInit {
+export class ArticleCreate {
   private readonly articleService = inject(ArticleService);
   private readonly topicService = inject(TopicService);
   private readonly formApiErrorService = inject(FormApiErrorService);
@@ -26,8 +26,9 @@ export class ArticleCreate implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly isSubmitting = signal(false);
-  readonly isLoadingTopics = signal(true);
-  readonly topics = signal<readonly TopicOption[]>([]);
+  readonly topicsResource = this.topicService.topicsResource;
+  readonly topics = this.topicService.topics;
+  readonly topicsErrorMessage = this.topicService.topicsErrorMessage;
 
   readonly articleForm = this.fb.nonNullable.group({
     topicId: ['', Validators.required],
@@ -41,16 +42,6 @@ export class ArticleCreate implements OnInit {
         this.formApiErrorService.clearServerError(control);
       });
     });
-  }
-
-  ngOnInit(): void {
-    this.topicService
-      .getTopics()
-      .pipe(finalize(() => this.isLoadingTopics.set(false)))
-      .subscribe({
-        next: (topics) => this.topics.set(topics),
-        error: (error: ApiError) => this.notificationService.error(error.detail),
-      });
   }
 
   onSubmit(): void {
@@ -74,6 +65,10 @@ export class ArticleCreate implements OnInit {
           }
         },
       });
+  }
+
+  reloadTopics(): void {
+    this.topicService.reloadTopics();
   }
 
   get f() {

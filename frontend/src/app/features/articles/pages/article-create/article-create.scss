@@ -48,6 +48,17 @@
   color: var(--orion-danger);
 }
 
+.article-form__retry {
+  justify-self: start;
+  padding: 0;
+  color: var(--orion-primary);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 .article-form input,
 .article-form select,
 .article-form textarea {

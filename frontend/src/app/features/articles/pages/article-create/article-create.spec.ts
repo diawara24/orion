@@ -1,8 +1,9 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ArticleService } from '@features/articles/services/article.service';
-import { TopicService } from '@features/topic/services/topic.service';
+import { TopicService } from '@features/topics/services/topic.service';
 import { NotificationService } from '@core/notification/notification.service';
 import { FormApiErrorService } from '@core/http/form-api-error.service';
 import type { ApiError } from '@core/http/api-error.model';
@@ -24,7 +25,15 @@ describe('ArticleCreate', () => {
       providers: [
         provideRouter([]),
         { provide: ArticleService, useValue: articleService },
-        { provide: TopicService, useValue: { getTopics: vi.fn(() => of([])) } },
+        {
+          provide: TopicService,
+          useValue: {
+            topicsResource: { isLoading: () => false },
+            topics: signal([]),
+            topicsErrorMessage: () => null,
+            reloadTopics: vi.fn(),
+          },
+        },
         { provide: NotificationService, useValue: notificationService },
         FormApiErrorService,
       ],

@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { TopicService } from './topic.service';
 
+
 describe('TopicService', () => {
   let service: TopicService;
   let httpMock: HttpTestingController;
@@ -18,14 +19,20 @@ describe('TopicService', () => {
 
   afterEach(() => httpMock.verify());
 
-  it('gets topics available to the current user', () => {
-    service.getTopics().subscribe((topics) => {
-      expect(topics).toHaveLength(1);
-      expect(topics[0].name).toBe('Angular');
-    });
+  it('subscribes to a topic', () => {
+    service.subscribeToTopic('topic-1').subscribe();
 
-    const request = httpMock.expectOne('/api/v1/topics');
-    expect(request.request.method).toBe('GET');
-    request.flush([{ id: 'topic-1', name: 'Angular', subscribed: true }]);
+    const request = httpMock.expectOne('/api/v1/topics/topic-1/subscription');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toBeNull();
+    request.flush(null);
+  });
+
+  it('unsubscribes from a topic', () => {
+    service.unsubscribeFromTopic('topic-1').subscribe();
+
+    const request = httpMock.expectOne('/api/v1/topics/topic-1/subscription');
+    expect(request.request.method).toBe('DELETE');
+    request.flush(null);
   });
 });

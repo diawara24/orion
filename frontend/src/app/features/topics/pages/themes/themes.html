@@ -1,0 +1,38 @@
+<section class="themes" aria-labelledby="themes-title">
+  <h1 id="themes-title" class="visually-hidden">Thèmes</h1>
+
+  @if (topicsResource.isLoading()) {
+    <p class="themes__state">Chargement des thèmes…</p>
+  } @else if (errorMessage()) {
+    <div class="themes__state themes__state--error" role="alert">
+      <p>{{ errorMessage() }}</p>
+      <button type="button" (click)="topicsResource.reload()">Réessayer</button>
+    </div>
+  } @else {
+    <div class="themes__grid">
+      @for (topic of topics(); track topic.id) {
+        <article class="topic-card">
+          <h2>{{ topic.name }}</h2>
+          <p>Suivez ce thème pour retrouver ses articles dans votre fil d’actualité.</p>
+          <button
+            type="button"
+            class="topic-card__subscription"
+            [class.topic-card__subscription--active]="topic.subscribed"
+            [disabled]="pendingTopicId() === topic.id"
+            [attr.aria-pressed]="topic.subscribed"
+            [attr.aria-label]="topic.subscribed ? 'Se désabonner du thème ' + topic.name : 'S’abonner au thème ' + topic.name"
+            (click)="toggleSubscription(topic)"
+          >
+            @if (pendingTopicId() === topic.id) {
+              Mise à jour…
+            } @else {
+              {{ topic.subscribed ? 'Déjà abonné' : 'S’abonner' }}
+            }
+          </button>
+        </article>
+      } @empty {
+        <p class="themes__state">Aucun thème disponible.</p>
+      }
+    </div>
+  }
+</section>

@@ -7,7 +7,7 @@
     @if (currentUser()) {
     <button type="button" class="navbar__logout" (click)="logout()">Se déconnecter</button>
     <a routerLink="/feed" routerLinkActive="navbar__link--active">Articles</a>
-    <span class="navbar__static-link">Thèmes</span>
+    <a routerLink="/themes" routerLinkActive="navbar__link--active">Thèmes</a>
     <button type="button" class="navbar__profile" aria-label="Consulter mon profil">
       <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
     </button>

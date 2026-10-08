@@ -23,8 +23,11 @@
             <option [value]="topic.id">{{ topic.name }}</option>
           }
         </select>
-        @if (isLoadingTopics()) {
+        @if (topicsResource.isLoading()) {
           <p class="article-form__hint">Chargement des thèmes…</p>
+        } @else if (topicsErrorMessage()) {
+          <p class="article-form__error" role="alert">{{ topicsErrorMessage() }}</p>
+          <button type="button" class="article-form__retry" (click)="reloadTopics()">Réessayer</button>
         } @else if (f.topicId.invalid && (f.topicId.dirty || f.topicId.touched)) {
           <p id="topic-error" class="article-form__error">{{ f.topicId.getError('server') ?? 'Sélectionnez un thème.' }}</p>
         }
@@ -70,7 +73,7 @@
       </div>
 
       <div class="article-form__actions">
-        <button type="submit" [disabled]="isSubmitting() || isLoadingTopics()">
+        <button type="submit" [disabled]="isSubmitting() || topicsResource.isLoading()">
           {{ isSubmitting() ? 'Publication…' : 'Publier l’article' }}
         </button>
       </div>

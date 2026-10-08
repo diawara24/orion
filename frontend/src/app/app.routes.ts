@@ -36,6 +36,11 @@ export const routes: Routes = [
         title: "Fil d'actualité | Orion"
       },
       {
+        path: 'themes',
+        loadComponent: () => import('./features/topics/pages/themes/themes').then((m) => m.Themes),
+        title: "Thèmes | Orion"
+      },
+      {
         path: 'articles/create',
         loadComponent: () => import('./features/articles/pages/article-create/article-create').then((m) => m.ArticleCreate),
         title: "Créer un article | Orion"
