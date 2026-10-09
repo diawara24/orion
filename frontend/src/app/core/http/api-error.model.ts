@@ -16,6 +16,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+export function isApiError(value: unknown): value is ApiError {
+  return isRecord(value)
+    && typeof value['type'] === 'string'
+    && typeof value['title'] === 'string'
+    && typeof value['status'] === 'number'
+    && typeof value['detail'] === 'string'
+    && typeof value['instance'] === 'string';
+}
+
 // Remplace les valeurs absentes ou vides par un texte exploitable par l'interface.
 function readString(value: unknown, fallback: string): string {
   return typeof value === 'string' && value.trim().length > 0 ? value : fallback;
@@ -35,6 +44,10 @@ function readStringRecord(value: unknown): Record<string, string> | undefined {
 
 /** Convertit une erreur HTTP ou JavaScript en un format stable pour l'application. */
 export function toApiError(error: unknown): ApiError {
+  if (isApiError(error)) {
+    return error;
+  }
+
   if (error instanceof HttpErrorResponse) {
     const body = isRecord(error.error) ? error.error : {};
     const errors = readStringRecord(body['errors']);

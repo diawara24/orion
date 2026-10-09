@@ -3,10 +3,10 @@ import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from 
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideApi } from './core/api';
 import { environment } from '../environments/environment';
 import { authInterceptor } from '@core/http/auth-interceptor';
+import { apiErrorInterceptor } from '@core/http/api-error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
     ),
 
     // Gerer les requetes HTTP
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, apiErrorInterceptor])),
 
     // Gerer l'API de l'application
     provideApi(environment.apiBaseUrl),

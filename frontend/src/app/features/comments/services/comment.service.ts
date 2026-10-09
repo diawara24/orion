@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchApiError } from '@core/http/catch-api-error.operator';
 import { environment } from '@env/environment';
 import type { Observable } from 'rxjs';
 import type { Comment, CommentPageResponse, CreateCommentRequest } from '../models/comment.model';
@@ -17,16 +16,12 @@ export class CommentService {
   private readonly http = inject(HttpClient);
 
   getByArticleId(articleId: string, page = 0, size = 20): Observable<CommentPageResponse> {
-    return this.http
-      .get<CommentPageResponse>(`${this.apiBaseUrl}/articles/${articleId}/comments`, {
-        params: { page, size },
-      })
-      .pipe(catchApiError());
+    return this.http.get<CommentPageResponse>(`${this.apiBaseUrl}/articles/${articleId}/comments`, {
+      params: { page, size },
+    });
   }
 
   create(articleId: string, request: CreateCommentRequest): Observable<Comment> {
-    return this.http
-      .post<Comment>(`${this.apiBaseUrl}/articles/${articleId}/comments`, request)
-      .pipe(catchApiError());
+    return this.http.post<Comment>(`${this.apiBaseUrl}/articles/${articleId}/comments`, request);
   }
 }

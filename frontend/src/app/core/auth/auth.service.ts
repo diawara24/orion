@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, tap, type Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { catchApiError } from '../http/catch-api-error.operator';
 import type {
   LoginRequest,
   LoginResponse,
@@ -32,15 +31,12 @@ export class AuthService {
     return this.http
       .post<LoginResponse>(`${this.apiBaseUrl}/auth/login`, credentials)
       .pipe(
-        catchApiError(),
         tap((response) => this.storeSession(response))
       );
   }
 
   register(data: RegisterRequest): Observable<UserResponse> {
-    return this.http
-      .post<UserResponse>(`${this.apiBaseUrl}/auth/register`, data)
-      .pipe(catchApiError());
+    return this.http.post<UserResponse>(`${this.apiBaseUrl}/auth/register`, data);
   }
 
   logout(): void {
@@ -51,6 +47,21 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+
+    if (!token) {
+      return true;
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return typeof payload.exp === 'number' && payload.exp * 1000 <= Date.now();
+    } catch {
+      return true;
+    }
   }
 
   getToken(): string | null {

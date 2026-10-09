@@ -1,6 +1,5 @@
 import { httpResource, HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable } from '@angular/core';
-import { catchApiError } from '@core/http/catch-api-error.operator';
 import { toApiError } from '@core/http/api-error.model';
 import { environment } from '@env/environment';
 import type { Observable } from 'rxjs';
@@ -28,15 +27,11 @@ export class TopicService {
   });
 
   subscribeToTopic(topicId: string): Observable<void> {
-    return this.http
-      .put<void>(`${this.apiBaseUrl}/topics/${topicId}/subscription`, null)
-      .pipe(catchApiError());
+    return this.http.put<void>(`${this.apiBaseUrl}/topics/${topicId}/subscription`, null);
   }
 
   unsubscribeFromTopic(topicId: string): Observable<void> {
-    return this.http
-      .delete<void>(`${this.apiBaseUrl}/topics/${topicId}/subscription`)
-      .pipe(catchApiError());
+    return this.http.delete<void>(`${this.apiBaseUrl}/topics/${topicId}/subscription`);
   }
 
   reloadTopics(): void {

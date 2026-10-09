@@ -1,7 +1,9 @@
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AuthService } from './auth.service';
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { apiErrorInterceptor } from '../http/api-error.interceptor';
 import { User } from '../model/auth.model';
 
 
@@ -26,7 +28,11 @@ describe('AuthService', () => {
     localStorage.clear();
 
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(withInterceptors([apiErrorInterceptor])),
+        provideHttpClientTesting(),
+      ],
     });
 
 
