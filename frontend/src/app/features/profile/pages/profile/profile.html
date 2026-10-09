@@ -1,0 +1,68 @@
+@if (isLoading()) {
+  <p class="profile__state">Chargement du profil…</p>
+} @else if (errorMessage()) {
+  <p class="profile__state profile__state--error" role="alert">{{ errorMessage() }}</p>
+} @else if (profile(); as profile) {
+  <section class="profile" aria-labelledby="profile-title">
+    <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="save()" novalidate>
+      <h1 id="profile-title">Profil utilisateur</h1>
+
+      <div class="profile-form__field" [class.profile-form__field--invalid]="f.username.invalid && f.username.touched">
+        <label class="visually-hidden" for="username">Nom d’utilisateur</label>
+        <input id="username" formControlName="username" autocomplete="username" placeholder="Nom d’utilisateur" />
+        @if (f.username.invalid && f.username.touched) {
+          <p class="profile-form__error">{{ f.username.getError('server') ?? 'Le nom d’utilisateur est requis.' }}</p>
+        }
+      </div>
+
+      <div class="profile-form__field" [class.profile-form__field--invalid]="f.email.invalid && f.email.touched">
+        <label class="visually-hidden" for="email">Adresse e-mail</label>
+        <input id="email" formControlName="email" type="email" autocomplete="email" placeholder="Adresse e-mail" />
+        @if (f.email.invalid && f.email.touched) {
+          <p class="profile-form__error">{{ f.email.getError('server') ?? 'Saisissez une adresse e-mail valide.' }}</p>
+        }
+      </div>
+
+      <div class="profile-form__field" [class.profile-form__field--invalid]="f.password.invalid && f.password.touched">
+        <label class="visually-hidden" for="password">Nouveau mot de passe</label>
+        <input id="password" formControlName="password" type="password" autocomplete="new-password" placeholder="Nouveau mot de passe" />
+        @if (f.password.invalid && f.password.touched) {
+          <p class="profile-form__error">{{ f.password.getError('server') ?? 'Le mot de passe ne respecte pas les règles de sécurité.' }}</p>
+        }
+      </div>
+
+      @if (f.password.value) {
+        <div class="profile-form__field" [class.profile-form__field--invalid]="f.currentPassword.invalid && f.currentPassword.touched">
+          <label class="visually-hidden" for="current-password">Mot de passe actuel</label>
+          <input id="current-password" formControlName="currentPassword" type="password" autocomplete="current-password" placeholder="Mot de passe actuel" />
+          @if (f.currentPassword.invalid && f.currentPassword.touched) {
+            <p class="profile-form__error">{{ f.currentPassword.getError('server') ?? 'Le mot de passe actuel est requis.' }}</p>
+          }
+        </div>
+      }
+
+      <button type="submit" [disabled]="isSaving()">
+        {{ isSaving() ? 'Enregistrement…' : 'Sauvegarder' }}
+      </button>
+    </form>
+
+    <section class="subscriptions" aria-labelledby="subscriptions-title">
+      <h2 id="subscriptions-title">Abonnements</h2>
+      @if (profile.subscriptions.length === 0) {
+        <p class="subscriptions__empty">Vous ne suivez encore aucun thème.</p>
+      } @else {
+        <div class="subscriptions__grid">
+          @for (topic of profile.subscriptions; track topic.id) {
+            <article class="subscription-card">
+              <h3>{{ topic.name }}</h3>
+              <p>Les articles de ce thème sont affichés dans votre fil d’actualité.</p>
+              <button type="button" [disabled]="pendingTopicId() === topic.id" (click)="unsubscribe(topic.id)">
+                {{ pendingTopicId() === topic.id ? 'Mise à jour…' : 'Se désabonner' }}
+              </button>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </section>
+}

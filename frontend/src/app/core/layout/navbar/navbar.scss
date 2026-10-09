@@ -55,6 +55,13 @@
   border-radius: 50%;
   cursor: pointer;
   place-items: center;
+  text-decoration: none;
+}
+
+.navbar__desktop-navigation .navbar__profile--active,
+.navbar__mobile-panel .navbar__profile--active {
+  color: var(--orion-primary);
+  background: transparent;
 }
 
 .navbar__profile .material-symbols-outlined {

@@ -8,9 +8,9 @@
     <button type="button" class="navbar__logout" (click)="logout()">Se déconnecter</button>
     <a routerLink="/feed" routerLinkActive="navbar__link--active">Articles</a>
     <a routerLink="/themes" routerLinkActive="navbar__link--active">Thèmes</a>
-    <button type="button" class="navbar__profile" aria-label="Consulter mon profil">
+    <a class="navbar__profile" routerLink="/profile" routerLinkActive="navbar__profile--active" aria-label="Consulter mon profil">
       <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
-    </button>
+    </a>
     } @else {
     <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="navbar__link--active">Accueil</a>
     <a routerLink="/login" routerLinkActive="navbar__link--active">Se connecter</a>
@@ -29,10 +29,10 @@
         @if (currentUser()) {
         <button type="button" class="navbar__logout" (click)="logout()">Se déconnecter</button>
         <a routerLink="/feed">Articles</a>
-        <span class="navbar__static-link">Thèmes</span>
-        <button type="button" class="navbar__profile" aria-label="Consulter mon profil">
+        <a routerLink="/themes">Thèmes</a>
+        <a class="navbar__profile" routerLink="/profile" routerLinkActive="navbar__profile--active" aria-label="Consulter mon profil">
           <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
-        </button>
+        </a>
         } @else {
         <a routerLink="/">Accueil</a>
         <a routerLink="/login">Se connecter</a>

@@ -90,6 +90,16 @@ describe('AuthService', () => {
     expect(service.isAuthenticated()).toBe(false);
   });
 
+  it('met à jour l’utilisateur conservé après une modification de profil', () => {
+    service = TestBed.inject(AuthService);
+    const updatedUser = { ...user, username: 'lea-dev' };
+
+    service.updateCurrentUser(updatedUser);
+
+    expect(service.getCurrentUser()).toEqual(updatedUser);
+    expect(JSON.parse(localStorage.getItem('orion_user')!)).toEqual(updatedUser);
+  });
+
   it('supprime les données utilisateur stockées si le JSON est invalide', () => {
     localStorage.setItem('orion_user', 'json-invalide');
     service = TestBed.inject(AuthService);
