@@ -32,6 +32,9 @@ public class Topic {
     @Column(nullable = false, unique = true, length = 255)
     private String name;
 
+    @Column(nullable = false, length = 255)
+    private String description;
+
     @Version
     @Column(nullable = false)
     private Long version;

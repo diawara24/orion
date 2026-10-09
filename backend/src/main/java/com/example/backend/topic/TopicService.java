@@ -37,7 +37,12 @@ public class TopicService {
             throw new ConflictException();
         }
 
-        Topic topic = topicRepository.save(Topic.builder().name(name).build());
+        Topic topic = topicRepository.save(
+                Topic.builder()
+                    .name(name)
+                    .description(request.getDescription())
+                    .build()
+                );
 
         log.info("Topic created: id={}, name={}", topic.getId(), topic.getName());
 
@@ -54,6 +59,7 @@ public class TopicService {
         }
 
         topic.setName(name);
+        topic.setDescription(request.getDescription());
 
         log.info("Topic updated: id={}, name={}", topic.getId(), topic.getName());
 
