@@ -11,5 +11,6 @@
 
 export interface UpdateTopicRequestDto { 
     name: string;
+    description: string;
 }
 

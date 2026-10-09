@@ -12,6 +12,7 @@
 export interface TopicResponseDto { 
     id: string;
     name: string;
+    description: string;
     subscribed: boolean;
 }
 

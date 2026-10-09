@@ -11,5 +11,6 @@
 
 export interface CreateTopicRequestDto { 
     name: string;
+    description: string;
 }
 

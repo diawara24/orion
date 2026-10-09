@@ -13,7 +13,7 @@
       @for (topic of topics(); track topic.id) {
         <article class="topic-card">
           <h2>{{ topic.name }}</h2>
-          <p>Suivez ce thème pour retrouver ses articles dans votre fil d’actualité.</p>
+          <p>{{ topic.description }}</p>
           <button
             type="button"
             class="topic-card__subscription"
