@@ -570,12 +570,14 @@ components:
     TopicResponseDto:
       type: object
       additionalProperties: false
-      required: [id, name, subscribed]
+      required: [id, name, description, subscribed]
       properties:
         id:
           type: string
           format: uuid
         name:
+          type: string
+        description:
           type: string
         subscribed:
           type: boolean
@@ -583,12 +585,14 @@ components:
     TopicAdminResponseDto:
       type: object
       additionalProperties: false
-      required: [id, name, createdAt, updatedAt]
+      required: [id, name, description, createdAt, updatedAt]
       properties:
         id:
           type: string
           format: uuid
         name:
+          type: string
+        description:
           type: string
         createdAt:
           type: string
@@ -600,24 +604,32 @@ components:
     CreateTopicRequestDto:
       type: object
       additionalProperties: false
-      required: [name]
+      required: [name, description]
       properties:
         name:
           type: string
           minLength: 1
           maxLength: 255
           pattern: '.*\S.*'
+        description:
+          type: string
+          minLength: 1
+          maxLength: 255
 
     UpdateTopicRequestDto:
       type: object
       additionalProperties: false
-      required: [name]
+      required: [name, description]
       properties:
         name:
           type: string
           minLength: 1
           maxLength: 255
           pattern: '.*\S.*'
+        description:
+          type: string
+          minLength: 1
+          maxLength: 255
 
     CreateArticleRequestDto:
       type: object
