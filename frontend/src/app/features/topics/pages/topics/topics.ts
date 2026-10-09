@@ -6,11 +6,11 @@ import { TopicService, type TopicOption } from '@features/topics/services/topic.
 
 @Component({
   imports: [],
-  selector: 'app-themes',
-  styleUrl: './themes.scss',
-  templateUrl: './themes.html',
+  selector: 'app-topics',
+  styleUrl: './topics.scss',
+  templateUrl: './topics.html',
 })
-export class Themes {
+export class Topics {
   private readonly topicService = inject(TopicService);
   private readonly notificationService = inject(NotificationService);
 
@@ -25,9 +25,7 @@ export class Themes {
     }
 
     this.pendingTopicId.set(topic.id);
-    const request = topic.subscribed
-      ? this.topicService.unsubscribeFromTopic(topic.id)
-      : this.topicService.subscribeToTopic(topic.id);
+    const request = this.topicService.subscribeToTopic(topic.id);
 
     request.pipe(finalize(() => this.pendingTopicId.set(null))).subscribe({
       next: () => this.topicService.reloadTopics(),

@@ -37,7 +37,7 @@ export const routes: Routes = [
       },
       {
         path: 'themes',
-        loadComponent: () => import('./features/topics/pages/themes/themes').then((m) => m.Themes),
+        loadComponent: () => import('./features/topics/pages/topics/topics').then((m) => m.Topics),
         title: "Thèmes | Orion"
       },
       {

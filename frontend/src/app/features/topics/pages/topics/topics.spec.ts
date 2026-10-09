@@ -4,17 +4,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { NotificationService } from '@core/notification/notification.service';
 import { TopicService } from '@features/topics/services/topic.service';
-import { Themes } from './themes';
+import { Topics } from './topics';
 
-describe('Themes', () => {
-  let component: Themes;
-  let fixture: ComponentFixture<Themes>;
+describe('Topics', () => {
+  let component: Topics;
+  let fixture: ComponentFixture<Topics>;
   let httpMock: HttpTestingController;
   let topicService: TopicService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Themes],
+      imports: [Topics],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -22,7 +22,7 @@ describe('Themes', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Themes);
+    fixture = TestBed.createComponent(Topics);
     component = fixture.componentInstance;
     topicService = TestBed.inject(TopicService);
     vi.spyOn(topicService, 'subscribeToTopic').mockReturnValue(of(undefined));

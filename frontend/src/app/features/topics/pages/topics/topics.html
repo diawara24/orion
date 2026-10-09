@@ -18,9 +18,9 @@
             type="button"
             class="topic-card__subscription"
             [class.topic-card__subscription--active]="topic.subscribed"
-            [disabled]="pendingTopicId() === topic.id"
+            [disabled]="pendingTopicId() === topic.id || topic.subscribed"
             [attr.aria-pressed]="topic.subscribed"
-            [attr.aria-label]="topic.subscribed ? 'Se désabonner du thème ' + topic.name : 'S’abonner au thème ' + topic.name"
+            [attr.aria-label]="topic.subscribed ? 'Déjà abonné au thème ' + topic.name : 'S’abonner au thème ' + topic.name"
             (click)="toggleSubscription(topic)"
           >
             @if (pendingTopicId() === topic.id) {
