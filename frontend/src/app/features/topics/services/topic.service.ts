@@ -5,7 +5,7 @@ import { environment } from '@env/environment';
 import type { Observable } from 'rxjs';
 import type { Topic } from '../models/topic.model';
 
-export type TopicOption = Pick<Topic, 'id' | 'name' | 'description' | 'subscribed'>;
+export type TopicOption = Topic;
 
 @Injectable({
   providedIn: 'root',

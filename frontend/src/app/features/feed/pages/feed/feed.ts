@@ -12,7 +12,7 @@ import {
 import type { ApiError } from '@core/http/api-error.model';
 import { NotificationService } from '@core/notification/notification.service';
 import { ArticleCard } from '@features/articles/ui/article-card/article-card';
-import type { Article, ArticleSort } from '@features/articles/models/article.model';
+import type { ArticleSort, ArticleSummary } from '@features/articles/models/article.model';
 import { ArticleService } from '@features/articles/services/article.service';
 import { RouterModule } from '@angular/router';
 import { finalize, type Subscription } from 'rxjs';
@@ -30,7 +30,7 @@ export class Feed implements OnInit, AfterViewInit, OnDestroy {
   readonly size = 10;
   readonly totalPages = signal(0);
   readonly isLoadingMore = signal(false);
-  readonly articles = signal<readonly Article[]>([]);
+  readonly articles = signal<readonly ArticleSummary[]>([]);
 
   readonly hasMore = computed(() => this.page() + 1 < this.totalPages());
 
@@ -120,7 +120,10 @@ export class Feed implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  private appendUnique(currentArticles: readonly Article[], nextArticles: readonly Article[]): Article[] {
+  private appendUnique(
+    currentArticles: readonly ArticleSummary[],
+    nextArticles: readonly ArticleSummary[],
+  ): ArticleSummary[] {
     const knownIds = new Set(currentArticles.map((article) => article.id));
 
     return [...currentArticles, ...nextArticles.filter((article) => !knownIds.has(article.id))];

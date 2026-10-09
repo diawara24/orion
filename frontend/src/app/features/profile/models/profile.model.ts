@@ -3,6 +3,7 @@ import type { User } from '@core/model/auth.model';
 export interface ProfileTopic {
   id: string;
   name: string;
+  description: string;
   subscribed: boolean;
 }
 

@@ -20,7 +20,12 @@ describe('Profile', () => {
     email: 'lea@example.com',
     createdAt: '2026-10-01T10:00:00Z',
     updatedAt: '2026-10-01T10:00:00Z',
-    subscriptions: [{ id: 'topic-1', name: 'Angular', subscribed: true }],
+    subscriptions: [{
+      id: 'topic-1',
+      name: 'Angular',
+      description: 'Actualités et ressources autour d’Angular.',
+      subscribed: true,
+    }],
   };
 
   beforeEach(async () => {

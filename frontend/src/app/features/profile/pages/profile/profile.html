@@ -55,7 +55,7 @@
           @for (topic of profile.subscriptions; track topic.id) {
             <article class="subscription-card">
               <h3>{{ topic.name }}</h3>
-              <p>Les articles de ce thème sont affichés dans votre fil d’actualité.</p>
+              <p>{{ topic.description }}</p>
               <button type="button" [disabled]="pendingTopicId() === topic.id" (click)="unsubscribe(topic.id)">
                 {{ pendingTopicId() === topic.id ? 'Mise à jour…' : 'Se désabonner' }}
               </button>

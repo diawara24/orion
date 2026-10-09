@@ -50,7 +50,12 @@ describe('Themes', () => {
   it('subscribes to a topic then reloads the resource', async () => {
     const reloadTopics = vi.spyOn(topicService, 'reloadTopics').mockImplementation(() => undefined);
 
-    component.toggleSubscription({ id: 'topic-1', name: 'Angular', subscribed: false });
+    component.toggleSubscription({
+      id: 'topic-1',
+      name: 'Angular',
+      description: 'Actualités et ressources autour d’Angular.',
+      subscribed: false,
+    });
 
     expect(topicService.subscribeToTopic).toHaveBeenCalledWith('topic-1');
     expect(reloadTopics).toHaveBeenCalledOnce();

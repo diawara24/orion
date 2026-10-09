@@ -22,7 +22,6 @@ describe('ArticleCard', () => {
       author: { id: 'user-1', username: 'Maya Martin' },
       topic: { id: 'topic-api', name: 'API REST', subscribed: true },
       createdAt: '2026-10-01T09:30:00Z',
-      commentCount: 12,
     });
     fixture.detectChanges();
   });

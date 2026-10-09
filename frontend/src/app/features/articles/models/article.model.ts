@@ -1,7 +1,8 @@
 import type { User } from '@core/model/auth.model';
 import type { Topic } from '@features/topics/models/topic.model';
 
-export interface Article {
+/** Représentation légère renvoyée dans le fil d’actualité. */
+export interface ArticleSummary {
   id: string;
   title: string;
   slug: string;
@@ -9,7 +10,6 @@ export interface Article {
   author: Pick<User, 'id' | 'username'>;
   topic: Pick<Topic, 'id' | 'name' | 'subscribed'>;
   createdAt: string | Date;
-  commentCount: number;
 }
 
 export interface CreateArticleRequest {
@@ -18,13 +18,15 @@ export interface CreateArticleRequest {
   topicId: string;
 }
 
-export interface ArticleDetail extends Article {
+/** Représentation complète renvoyée par la consultation d’un article. */
+export interface ArticleDetail extends ArticleSummary {
   content: string;
   updatedAt: string | Date;
+  commentCount: number;
 }
 
 export interface ArticlePageResponse {
-  content: Article[];
+  content: ArticleSummary[];
   page: number;
   size: number;
   totalElements: number;
