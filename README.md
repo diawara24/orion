@@ -67,6 +67,14 @@ L'API est disponible sous `http://localhost:8080/api/v1`.
 
 La documentation interactive est accessible à l'adresse `http://localhost:8080/api/v1/swagger-ui/index.html`.
 
+### Compte de démonstration
+
+Après l'exécution des migrations Flyway, un compte local permet de tester le fil d’actualité
+
+- Nom d’utilisateur : `demo`
+- E-mail : `scroll-demo@orion.local`
+- Mot de passe : `Orion2026!`
+
 ### Frontend
 
 ```powershell
