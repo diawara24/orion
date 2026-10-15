@@ -1,18 +1,22 @@
-describe('Création d’un article', () => {
-  const currentUser = {
-    id: '90e9d2cd-f3e3-4a95-8c5a-8794e7dff2e9',
-    username: 'orlando',
-    email: 'orlando@example.com',
-    createdAt: '2026-10-02T10:00:00Z',
-    updatedAt: '2026-10-02T10:00:00Z',
-  };
+import { testUser, visitAsAuthenticatedUser } from '../../support/auth';
 
+describe('Création d’un article', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/api/v1/topics', {
       statusCode: 200,
       body: [
-        { id: 'topic-angular', name: 'Angular', subscribed: true },
-        { id: 'topic-spring', name: 'Spring Boot', subscribed: false },
+        {
+          id: 'topic-angular',
+          name: 'Angular',
+          description: 'Le framework Angular.',
+          subscribed: true,
+        },
+        {
+          id: 'topic-spring',
+          name: 'Spring Boot',
+          description: 'Le framework Spring Boot.',
+          subscribed: false,
+        },
       ],
     }).as('getTopics');
 
@@ -21,12 +25,7 @@ describe('Création d’un article', () => {
       body: { content: [], page: 0, size: 10, totalElements: 0, totalPages: 0 },
     }).as('getFeed');
 
-    cy.visit('/articles/create', {
-      onBeforeLoad(window) {
-        window.localStorage.setItem('orion_access_token', 'test-access-token');
-        window.localStorage.setItem('orion_user', JSON.stringify(currentUser));
-      },
-    });
+    visitAsAuthenticatedUser('/articles/create', testUser);
     cy.wait('@getTopics');
   });
 

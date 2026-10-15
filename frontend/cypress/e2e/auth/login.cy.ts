@@ -1,21 +1,24 @@
+import { testAccessToken, testUser } from '../../support/auth';
+
 describe('Connexion', () => {
   beforeEach(() => {
     cy.visit('/login');
   });
 
   it('login user then redirect to feed page', () => {
+    // Le feed est chargé après la redirection : on le simule pour éviter qu'un
+    // 401 du backend local invalide volontairement le JWT de test.
+    cy.intercept({ method: 'GET', pathname: '/api/v1/articles' }, {
+      statusCode: 200,
+      body: { content: [], page: 0, size: 10, totalElements: 0, totalPages: 0 },
+    }).as('getFeed');
+
     cy.intercept('POST', '**/api/v1/auth/login', {
       statusCode: 200,
       body: {
-        accessToken: 'test-access-token',
+        accessToken: testAccessToken,
         tokenType: 'Bearer',
-        user: {
-          id: '90e9d2cd-f3e3-4a95-8c5a-8794e7dff2e9',
-          username: 'orlando',
-          email: 'orlando@example.com',
-          createdAt: '2026-10-02T10:00:00Z',
-          updatedAt: '2026-10-02T10:00:00Z',
-        },
+        user: testUser,
       },
     }).as('login');
 
@@ -32,5 +35,10 @@ describe('Connexion', () => {
     });
 
     cy.location('pathname').should('eq', '/feed');
+    cy.wait('@getFeed');
+    cy.window().then((window) => {
+      expect(window.localStorage.getItem('orion_access_token')).to.equal(testAccessToken);
+      expect(JSON.parse(window.localStorage.getItem('orion_user') ?? '{}')).to.deep.equal(testUser);
+    });
   });
 });

@@ -22,7 +22,7 @@ describe('Registration', () => {
     }).as('register');
 
     completeRegistrationForm();
-    cy.contains('button', 'Créer mon compte').click();
+    cy.contains('button', 'S’inscrire').click();
 
     cy.wait('@register').its('request.body').should('deep.equal', {
       username: 'orlando',
@@ -48,7 +48,7 @@ describe('Registration', () => {
     }).as('register');
 
     completeRegistrationForm();
-    cy.contains('button', 'Créer mon compte').click();
+    cy.contains('button', 'S’inscrire').click();
 
     cy.wait('@register');
     cy.get('#email-error').should('contain.text', 'Cette adresse e-mail est déjà utilisée.');
@@ -67,7 +67,7 @@ describe('Registration', () => {
     }).as('register');
 
     completeRegistrationForm();
-    cy.contains('button', 'Créer mon compte').click();
+    cy.contains('button', 'S’inscrire').click();
 
     cy.wait('@register');
     cy.contains('Cette ressource existe déjà.').should('be.visible');
