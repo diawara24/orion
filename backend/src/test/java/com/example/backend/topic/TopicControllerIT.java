@@ -11,6 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.backend.security.JwtService;
+import com.example.backend.article.ArticleRepository;
+import com.example.backend.comment.CommentRepository;
 import com.example.backend.subscription.Subscription;
 import com.example.backend.subscription.SubscriptionRepository;
 import com.example.backend.user.Role;
@@ -44,6 +46,12 @@ class TopicControllerIT {
     private SubscriptionRepository subscriptionRepository;
 
     @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -51,6 +59,8 @@ class TopicControllerIT {
 
     @BeforeEach
     void cleanDatabase() {
+        commentRepository.deleteAll();
+        articleRepository.deleteAll();
         subscriptionRepository.deleteAll();
         topicRepository.deleteAll();
         userRepository.deleteAll();
@@ -62,7 +72,7 @@ class TopicControllerIT {
                         .contextPath(CONTEXT_PATH)
                         .header(HttpHeaders.AUTHORIZATION, bearerTokenForAdmin())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"Spring Boot\"}"))
+                        .content("{\"name\": \"Spring Boot\", \"description\": \"Actualités Spring Boot.\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.name").value("Spring Boot"));
@@ -72,13 +82,16 @@ class TopicControllerIT {
 
     @Test
     void shouldReturnConflictWhenTopicNameAlreadyExists() throws Exception {
-        topicRepository.save(Topic.builder().name("Spring Boot").build());
+        topicRepository.save(Topic.builder()
+                .name("Spring Boot")
+                .description("Actualités Spring Boot.")
+                .build());
 
         mockMvc.perform(post(CONTEXT_PATH + "/topics")
                         .contextPath(CONTEXT_PATH)
                         .header(HttpHeaders.AUTHORIZATION, bearerTokenForAdmin())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"Spring Boot\"}"))
+                        .content("{\"name\": \"Spring Boot\", \"description\": \"Actualités Spring Boot.\"}"))
                 .andExpect(status().isConflict())
                 .andExpect(content().contentTypeCompatibleWith(
                         MediaType.APPLICATION_PROBLEM_JSON
@@ -89,14 +102,17 @@ class TopicControllerIT {
     @Test
     void shouldUpdateTopicAsAdmin() throws Exception {
         Topic topic = topicRepository.save(
-                Topic.builder().name("Spring").build()
+                Topic.builder()
+                        .name("Spring")
+                        .description("Actualités Spring.")
+                        .build()
         );
 
         mockMvc.perform(patch(CONTEXT_PATH + "/topics/{topicId}", topic.getId())
                         .contextPath(CONTEXT_PATH)
                         .header(HttpHeaders.AUTHORIZATION, bearerTokenForAdmin())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"Spring Boot\"}"))
+                        .content("{\"name\": \"Spring Boot\", \"description\": \"Actualités Spring Boot.\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(topic.getId().toString()))
                 .andExpect(jsonPath("$.name").value("Spring Boot"));
@@ -107,7 +123,10 @@ class TopicControllerIT {
     @Test
     void shouldDeleteTopicAsAdmin() throws Exception {
         Topic topic = topicRepository.save(
-                Topic.builder().name("Spring Boot").build()
+                Topic.builder()
+                        .name("Spring Boot")
+                        .description("Actualités Spring Boot.")
+                        .build()
         );
 
         mockMvc.perform(delete(CONTEXT_PATH + "/topics/{topicId}", topic.getId())
@@ -121,7 +140,10 @@ class TopicControllerIT {
     @Test
     void shouldReturnSubscriptionStatusForCurrentUser() throws Exception {
         User user = createUser("member");
-        Topic topic = topicRepository.save(Topic.builder().name("Spring Boot").build());
+        Topic topic = topicRepository.save(Topic.builder()
+                .name("Spring Boot")
+                .description("Actualités Spring Boot.")
+                .build());
         subscriptionRepository.save(Subscription.builder().user(user).topic(topic).build());
 
         mockMvc.perform(get(CONTEXT_PATH + "/topics")
@@ -136,7 +158,10 @@ class TopicControllerIT {
     @Test
     void shouldSubscribeOnlyOnceWhenRequestIsRepeated() throws Exception {
         User user = createUser("member");
-        Topic topic = topicRepository.save(Topic.builder().name("Spring Boot").build());
+        Topic topic = topicRepository.save(Topic.builder()
+                .name("Spring Boot")
+                .description("Actualités Spring Boot.")
+                .build());
         String authorization = bearerTokenFor(user);
 
         mockMvc.perform(put(CONTEXT_PATH + "/topics/{topicId}/subscription", topic.getId())
@@ -156,7 +181,10 @@ class TopicControllerIT {
     @Test
     void shouldUnsubscribeFromTopic() throws Exception {
         User user = createUser("member");
-        Topic topic = topicRepository.save(Topic.builder().name("Spring Boot").build());
+        Topic topic = topicRepository.save(Topic.builder()
+                .name("Spring Boot")
+                .description("Actualités Spring Boot.")
+                .build());
         subscriptionRepository.save(Subscription.builder().user(user).topic(topic).build());
 
         mockMvc.perform(delete(CONTEXT_PATH + "/topics/{topicId}/subscription", topic.getId())

@@ -133,7 +133,10 @@ class CommentControllerIT {
     }
 
     private Article createArticle(User author) {
-        Topic topic = topicRepository.save(Topic.builder().name("Spring Boot").build());
+        Topic topic = topicRepository.save(Topic.builder()
+                .name("Spring Boot")
+                .description("Actualités Spring Boot.")
+                .build());
 
         return articleRepository.save(Article.builder()
                 .title("Spring Boot Basics")

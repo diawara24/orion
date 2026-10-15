@@ -88,6 +88,7 @@ class SubscriptionRepositoryTest {
     private Topic saveTopic() {
         return topicRepository.save(Topic.builder()
                 .name("security")
+                .description("Actualités sécurité.")
                 .build());
     }
 

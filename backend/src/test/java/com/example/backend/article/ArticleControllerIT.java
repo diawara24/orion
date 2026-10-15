@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.backend.security.JwtService;
+import com.example.backend.comment.CommentRepository;
 import com.example.backend.subscription.Subscription;
 import com.example.backend.subscription.SubscriptionRepository;
 import com.example.backend.topic.Topic;
@@ -48,10 +49,14 @@ class ArticleControllerIT {
     private SubscriptionRepository subscriptionRepository;
 
     @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
     private JwtService jwtService;
 
     @BeforeEach
     void cleanDatabase() {
+        commentRepository.deleteAll();
         articleRepository.deleteAll();
         subscriptionRepository.deleteAll();
         topicRepository.deleteAll();
@@ -180,7 +185,10 @@ class ArticleControllerIT {
     }
 
     private Topic createTopic(String name) {
-        return topicRepository.save(Topic.builder().name(name).build());
+        return topicRepository.save(Topic.builder()
+                .name(name)
+                .description("Actualités autour de " + name + ".")
+                .build());
     }
 
     private Article createArticle(User author, Topic topic, String title, String slug) {

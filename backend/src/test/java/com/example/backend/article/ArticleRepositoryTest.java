@@ -63,6 +63,7 @@ class ArticleRepositoryTest {
                         .build()))
                 .topic(topicRepository.save(Topic.builder()
                         .name("Spring Boot " + suffix)
+                        .description("Actualités Spring Boot.")
                         .build()))
                 .build();
     }

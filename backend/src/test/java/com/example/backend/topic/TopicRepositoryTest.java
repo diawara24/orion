@@ -23,7 +23,7 @@ class TopicRepositoryTest {
     @Test
     void shouldPersistTopicAndFindItByName() {
         Topic savedTopic = topicRepository.save(
-                Topic.builder().name("security").build()
+                Topic.builder().name("security").description("Actualités sécurité.").build()
         );
 
         assertThat(savedTopic.getId()).isNotNull();
@@ -32,8 +32,8 @@ class TopicRepositoryTest {
 
     @Test
     void shouldRejectDuplicateTopicName() {
-        topicRepository.save(Topic.builder().name("security").build());
-        topicRepository.save(Topic.builder().name("security").build());
+        topicRepository.save(Topic.builder().name("security").description("Actualités sécurité.").build());
+        topicRepository.save(Topic.builder().name("security").description("Actualités sécurité.").build());
 
         assertThatThrownBy(topicRepository::flush)
                 .isInstanceOf(DataIntegrityViolationException.class);

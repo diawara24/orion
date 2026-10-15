@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.backend.security.JwtService;
+import com.example.backend.article.ArticleRepository;
+import com.example.backend.comment.CommentRepository;
 import com.example.backend.subscription.Subscription;
 import com.example.backend.subscription.SubscriptionRepository;
 import com.example.backend.topic.Topic;
@@ -41,6 +43,12 @@ class UsersControllerIT {
     private SubscriptionRepository subscriptionRepository;
 
     @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
     private JwtService jwtService;
 
     @Autowired
@@ -48,6 +56,8 @@ class UsersControllerIT {
 
     @BeforeEach
     void cleanDatabase() {
+        commentRepository.deleteAll();
+        articleRepository.deleteAll();
         subscriptionRepository.deleteAll();
         topicRepository.deleteAll();
         userRepository.deleteAll();
@@ -61,7 +71,10 @@ class UsersControllerIT {
                 .passwordHash("unused")
                 .role(Role.USER)
                 .build());
-        Topic topic = topicRepository.save(Topic.builder().name("Spring Boot").build());
+        Topic topic = topicRepository.save(Topic.builder()
+                .name("Spring Boot")
+                .description("Actualités Spring Boot.")
+                .build());
         subscriptionRepository.save(Subscription.builder().user(user).topic(topic).build());
 
         mockMvc.perform(get(CONTEXT_PATH + "/users/me")

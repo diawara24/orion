@@ -8,6 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.backend.security.JwtService;
+import com.example.backend.article.ArticleRepository;
+import com.example.backend.comment.CommentRepository;
+import com.example.backend.subscription.SubscriptionRepository;
+import com.example.backend.topic.TopicRepository;
 import com.example.backend.user.Role;
 import com.example.backend.user.User;
 import com.example.backend.user.UserRepository;
@@ -47,10 +51,26 @@ class AuthenticationControllerIT {
     private UserRepository userRepository;
 
     @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
+    private SubscriptionRepository subscriptionRepository;
+
+    @Autowired
+    private TopicRepository topicRepository;
+
+    @Autowired
     private JwtService jwtService;
 
     @BeforeEach
     void cleanDatabase() {
+        commentRepository.deleteAll();
+        articleRepository.deleteAll();
+        subscriptionRepository.deleteAll();
+        topicRepository.deleteAll();
         userRepository.deleteAll();
     }
 
