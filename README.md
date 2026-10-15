@@ -1,14 +1,14 @@
 # Orion
 
-Orion est une application communautaire autour de la programmation. Les utilisateurs peuvent s'inscrire, s'abonner à des sujets, publier des articles et interagir via des commentaires.
+Orion est une application communautaire autour de la programmation. Un utilisateur peut créer un compte, suivre des thèmes, publier des articles et échanger au moyen de commentaires.
 
-Le projet est construit selon une approche **API first** : le contrat OpenAPI est la source de vérité de l'API avant son implémentation.
+Le projet suit une approche **API first** : le contrat [openapi/openapi.yaml](openapi/openapi.yaml) est la source de vérité de l’API. Il sert à générer les interfaces et DTO du backend Spring, ainsi que le client Angular.
 
 ## Structure du projet
 
-- `frontend/` : application Angular.
-- `backend/` : API Spring Boot.
-- `openapi/openapi.yaml` : contrat de l'API.
+- `frontend/` : application Angular 22.
+- `backend/` : API REST Spring Boot 4, PostgreSQL et Flyway.
+- `openapi/` : contrat OpenAPI.
 
 ## Prérequis
 
@@ -27,15 +27,39 @@ Depuis le dossier `backend/` :
 docker compose up -d
 ```
 
-PostgreSQL est alors disponible sur le port `5433`, avec la base, l'utilisateur et le mot de passe `orion`.
+PostgreSQL est alors disponible sur le port `5433`, avec la base, l’utilisateur et le mot de passe `orion`.
 
 ### Backend
 
-Le backend nécessite la variable d'environnement `JWT_SECRET`, une clé Base64 d'au moins 32 octets.
+Lors de la première configuration locale, créer `backend/.env` à partir du modèle :
 
 ```powershell
-$env:JWT_SECRET = "votre-cle-base64"
 cd backend
+Copy-Item .env.example .env
+```
+
+Le fichier `backend/.env` est chargé automatiquement par la dépendance `spring-dotenv` au démarrage et est ignoré par Git.
+
+La clé `JWT_SECRET` doit être encodée en Base64 et contenir au moins 32 octets. Exécuter cette commande dans PowerShell pour en générer une :
+
+```powershell
+$randomNumberGenerator = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$bytes = New-Object byte[] 32
+try {
+    $randomNumberGenerator.GetBytes($bytes)
+    [Convert]::ToBase64String($bytes)
+} finally {
+    $randomNumberGenerator.Dispose()
+}
+```
+
+Copier la valeur affichée dans `backend/.env`, après `JWT_SECRET=` :
+
+```env
+JWT_SECRET=collez-ici-la-valeur-generee
+```
+
+```powershell
 mvn spring-boot:run
 ```
 
@@ -53,9 +77,31 @@ npm start
 
 L'application Angular est disponible sur `http://localhost:4200`.
 
+## Fonctionnalités du MVP
+
+- Inscription et connexion avec JWT Bearer.
+- Consultation et modification du profil.
+- Liste des thèmes, abonnement et désabonnement.
+- Fil des articles des thèmes suivis, avec pagination et tri.
+- Publication et consultation détaillée d’articles.
+- Lecture et ajout de commentaires.
+- Réponses d’erreur au format RFC 9457 `ProblemDetail`.
+
+## Mettre à jour le contrat API
+
+Après une modification de `openapi/openapi.yaml`, regénérer les sources avant de compiler :
+
+```powershell
+cd backend
+mvn generate-sources
+
+cd ../frontend
+npm run api:generate
+```
+
 ## Tests et couverture
 
-Depuis `backend/` :
+### Backend
 
 ```powershell
 mvn clean test
@@ -63,11 +109,17 @@ mvn clean test
 
 Cette commande exécute les tests, génère les sources à partir du contrat OpenAPI et produit le rapport de couverture JaCoCo dans `backend/target/site/jacoco/index.html`.
 
+### Frontend
+
+```powershell
+cd frontend
+npm test
+npm run cypress:run
+```
+
 ## État actuel
 
-- Contrat OpenAPI versionné et génération des interfaces Spring/DTO.
-- Gestion des erreurs basée sur `ProblemDetail`.
-- Inscription, authentification JWT et accès stateless.
-- PostgreSQL, Flyway et tests H2.
-
-Ce README sera complété à mesure que les fonctionnalités et les choix d'architecture évolueront.
+- Contrat OpenAPI, génération de code et Swagger UI configurés.
+- Authentification JWT stateless avec rôles `USER` et `ADMIN`.
+- PostgreSQL, migrations Flyway et base H2 isolée pour les tests.
+- Tests unitaires, d’intégration backend et tests end-to-end Cypress.

@@ -1,0 +1,45 @@
+# Secrets and local environment overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Java / Maven / Spring Boot
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+hs_err_pid*
+
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/cache/
+frontend/coverage/
+frontend/out-tsc/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cypress artifacts
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+cypress.env.json
+
+# IDEs and operating systems
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+*.iml
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db
