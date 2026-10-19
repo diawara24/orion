@@ -195,6 +195,12 @@
     margin-left: 0;
   }
 
+  .article-detail__content, .comments {
+  margin-left: 0;
+}
+
+
+
   .article-detail__metadata div:last-child {
     grid-column: 1 / -1;
   }

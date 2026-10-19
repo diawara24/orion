@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '@core/auth/auth-guard';
+import { authGuard, publicHomeGuard } from '@core/auth/auth-guard';
 
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
+    canActivate: [publicHomeGuard],
     loadComponent: () => import('./features/home/pages/home/home').then((m) => m.Home),
     title: 'Home',
   },

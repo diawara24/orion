@@ -14,3 +14,14 @@ export const authGuard: CanActivateFn = (_route, state) => {
 
   return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
 };
+
+export const publicHomeGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isAuthenticated() && !authService.isTokenExpired()) {
+    return router.createUrlTree(['/feed']);
+  }
+
+  return true;
+};

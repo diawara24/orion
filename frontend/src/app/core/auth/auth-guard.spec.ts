@@ -1,11 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthService } from './auth.service';
-import { authGuard } from './auth-guard';
+import { authGuard, publicHomeGuard } from './auth-guard';
 
 describe('authGuard', () => {
   const executeGuard: CanActivateFn = (...guardParameters) =>
     TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+  const executePublicHomeGuard: CanActivateFn = (...guardParameters) =>
+    TestBed.runInInjectionContext(() => publicHomeGuard(...guardParameters));
 
   let authService: {
     isAuthenticated: ReturnType<typeof vi.fn>;
@@ -77,5 +79,32 @@ describe('authGuard', () => {
     expect(router.createUrlTree).toHaveBeenCalledWith(['/login'], {
       queryParams: { returnUrl: '/profile' },
     });
+  });
+
+  it('redirects an authenticated user from the public home page to the feed', () => {
+    const feedUrlTree = {} as UrlTree;
+    authService.isAuthenticated.mockReturnValue(true);
+    authService.isTokenExpired.mockReturnValue(false);
+    router.createUrlTree.mockReturnValue(feedUrlTree);
+
+    const result = executePublicHomeGuard(
+      {} as ActivatedRouteSnapshot,
+      { url: '/' } as RouterStateSnapshot,
+    );
+
+    expect(result).toBe(feedUrlTree);
+    expect(router.createUrlTree).toHaveBeenCalledWith(['/feed']);
+  });
+
+  it('keeps the public home page accessible to an anonymous user', () => {
+    authService.isAuthenticated.mockReturnValue(false);
+
+    const result = executePublicHomeGuard(
+      {} as ActivatedRouteSnapshot,
+      { url: '/' } as RouterStateSnapshot,
+    );
+
+    expect(result).toBe(true);
+    expect(router.createUrlTree).not.toHaveBeenCalled();
   });
 });
