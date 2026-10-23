@@ -32,6 +32,7 @@ cypress.env.json
 # IDEs and operating systems
 .idea/
 .vscode/*
+frontend/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
